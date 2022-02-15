@@ -15,9 +15,10 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findFirstByEmail(String email);
     Optional<User> findById(UUID id);
+    Optional<User> findByNick(String nick);
     List<User> findByRoles (UserRole roles);
 
-    @EntityGraph("grafo-user-con-vivienda")
+    @EntityGraph("grafo-followers-user")
     List<User> findAll();
 
 

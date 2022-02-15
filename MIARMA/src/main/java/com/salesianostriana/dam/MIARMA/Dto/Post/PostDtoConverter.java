@@ -16,8 +16,6 @@ public class PostDtoConverter {
                 .privacity(post.getPrivacity())
                 .fileScale(post.getFileScale())
                 .build();
-
-
     }
 
 }

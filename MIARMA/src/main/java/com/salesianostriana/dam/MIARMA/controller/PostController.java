@@ -1,6 +1,7 @@
 package com.salesianostriana.dam.MIARMA.controller;
 
 import com.salesianostriana.dam.MIARMA.Dto.Post.CreatePostDto;
+import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.PostDtoConverter;
 import com.salesianostriana.dam.MIARMA.models.Post;
 import com.salesianostriana.dam.MIARMA.services.impl.PostServiceImpl;
@@ -10,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,4 +48,23 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(postDtoConverter.convertPostToGetPostDto(saved));
     }
+
+
+    @DeleteMapping("/post/{id}")
+    public ResponseEntity<?> deletePost(@AuthenticationPrincipal User userPrincipal, @PathVariable Long id) throws IOException {
+        return postService.deletePost(userPrincipal, id);
+    }
+
+    @GetMapping("/post/public")
+    public ResponseEntity<List<GetPostDto>> getAllPostPublic() throws IOException {
+        return ResponseEntity.ok().body(postService.getAllPostPublic());
+    }
+
+    @GetMapping("/post/{id}")
+    public ResponseEntity<GetPostDto> getPostById(@PathVariable Long id, @AuthenticationPrincipal User user) throws IOException {
+
+        Post post = postService.getPostById(id, user);
+        return ResponseEntity.ok().body(postDtoConverter.convertPostToGetPostDto(post));
+    }
+
 }

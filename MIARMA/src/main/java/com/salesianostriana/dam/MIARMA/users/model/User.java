@@ -1,7 +1,10 @@
 package com.salesianostriana.dam.MIARMA.users.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
+
+import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.models.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +63,18 @@ public class User implements UserDetails {
     private List<Post> postList;
 
 
+    @OneToMany
+    @JoinColumn(referencedColumnName = "id")
+    @JsonBackReference
+    @Builder.Default
+    private List<User> follows = new ArrayList<>();
+
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Peticion> peticionList = new ArrayList<>();
+
+
 
 
     @Override
@@ -94,6 +110,32 @@ public class User implements UserDetails {
         return true;
     }
 
+
+
+
+    public void addPeticion(Peticion p) {
+        if (this.getPeticionList() == null)
+            this.setPeticionList(new ArrayList<>());
+        this.getPeticionList().add(p);
+    }
+
+    public void removePeticion(Peticion p) {
+        this.getPeticionList().remove(p);
+        p = null;
+
+    }
+
+    public void addFollower(User u) {
+        if (this.getFollows() == null)
+            this.setFollows(new ArrayList<>());
+        this.getFollows().add(u);
+    }
+
+    public void removeFollower(User u) {
+        this.getFollows().remove(u);
+        u = null;
+
+    }
 
 
 }
