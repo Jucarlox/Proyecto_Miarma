@@ -61,7 +61,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> me(@AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<GetUserDto> me(@AuthenticationPrincipal User userPrincipal){
         GetUserDto getUserDto = userDtoConverter.convertUserEntityToGetUserDto2(userPrincipal);
 
         return ResponseEntity.status(HttpStatus.CREATED)

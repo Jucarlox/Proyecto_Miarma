@@ -24,12 +24,12 @@ public class UserDtoConverter {
 
 
         return GetUserDto.builder()
+                .id(user.getId())
                 .avatar(user.getAvatar())
                 .fechaNacimiento(user.getFechaNacimiento())
                 .nick(user.getNick())
                 .email(user.getEmail())
-                .postList(user.getPostList().stream().map(p -> new GetPostDto(p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList())
-
+                .postList(user.getPostList().stream().map(p -> new GetPostDto(p.getId(),p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList())
                 .build();
 
 

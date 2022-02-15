@@ -144,13 +144,45 @@ public class FileSystemStorageServiceImpl implements StorageService {
         return filename;
     }
 
+    @Override
+    public String publicacion(MultipartFile file) throws IOException {
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
+        String extension = StringUtils.getFilenameExtension(filename);
+        String name = filename.replace("."+ extension, "");
+
+        BufferedImage img = ImageIO.read(file.getInputStream());
+
+        BufferedImage escaleImg = simpleImageResizer(img, 1024);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        ImageIO.write(escaleImg, extension, baos);
+
+        MultipartFile newImage = new MockMultipartFile(name, baos.toByteArray());
+
+        try {
+
+            if (file.isEmpty())
+                throw new StorageException("El fichero subido está vacío");
 
 
+            while(Files.exists(rootLocation.resolve(filename))) {
+                String suffix = Long.toString(System.currentTimeMillis());
+                suffix = suffix.substring(suffix.length()-6);
 
+                filename = name + "_" + suffix + "." + extension;
+            }
+            try (InputStream inputStream = newImage.getInputStream()) {
+                Files.copy(inputStream, rootLocation.resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
 
-
-
-
+        } catch (IOException ex) {
+            throw new StorageException("Error en el almacenamiento del fichero: " + filename, ex);
+        }
+        return filename;
+    }
 
 
     @Override
@@ -190,8 +222,20 @@ public class FileSystemStorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void deleteFile(String filename) {
-        // Pendiente
+    public void deleteFile(Path filename) throws IOException {
+
+        MediaTypeUrlResource mediaTypeUrlResource = new MediaTypeUrlResource(filename.toUri());
+
+        try {
+            if (mediaTypeUrlResource.exists() || mediaTypeUrlResource.isReadable()) {
+                Files.delete(filename);
+            } else {
+                throw new FileNotFoundException(
+                        "Could not read file: " + filename);
+            }
+        }catch (MalformedURLException e) {
+            throw new FileNotFoundException("Could not read file: " + filename, e);
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class GetPostDto {
 
+        private Long id;
         private String title;
         private String descripcion;
         private String fileScale;

@@ -16,6 +16,7 @@ import java.util.UUID;
 @Builder
 public class GetUserDto {
 
+    private UUID id;
     private String nick;
     private String email;
     private Date fechaNacimiento;
