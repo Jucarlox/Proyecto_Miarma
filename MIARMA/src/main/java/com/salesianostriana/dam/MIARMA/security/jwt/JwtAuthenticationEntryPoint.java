@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.realstatev2.security.jwt;
+package com.salesianostriana.dam.MIARMA.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

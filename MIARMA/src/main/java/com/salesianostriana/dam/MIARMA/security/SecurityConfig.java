@@ -1,7 +1,9 @@
-package com.salesianostriana.dam.realstatev2.security;
+package com.salesianostriana.dam.MIARMA.security;
 
-import com.salesianostriana.dam.realstatev2.security.jwt.JwtAccessDeniedHandler;
-import com.salesianostriana.dam.realstatev2.security.jwt.JwtAuthorizationFilter;
+import com.salesianostriana.dam.MIARMA.security.jwt.JwtAccessDeniedHandler;
+import com.salesianostriana.dam.MIARMA.security.jwt.JwtAuthorizationFilter;
+import com.salesianostriana.dam.MIARMA.security.jwt.JwtAccessDeniedHandler;
+import com.salesianostriana.dam.MIARMA.security.jwt.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,35 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/register/user").anonymous()
-                .antMatchers(HttpMethod.POST, "/auth/login").anonymous()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/auth/register/gestor").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST,"/auth/register/admin").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET,"/propietario/").authenticated()
-                .antMatchers(HttpMethod.GET,"/propietario/**").hasAnyRole("ADMIN", "PROPIETARIO")
-                .antMatchers(HttpMethod.DELETE,"/propietario/**").hasAnyRole("ADMIN", "PROPIETARIO")
-                .antMatchers(HttpMethod.POST,"/vivienda/").hasRole("PROPIETARIO")
-                .antMatchers(HttpMethod.GET,"/vivienda/").authenticated()
-                .antMatchers(HttpMethod.GET,"/vivienda/**").authenticated()
-                .antMatchers(HttpMethod.PUT,"/vivienda/**").hasAnyRole("ADMIN", "PROPIETARIO")
-                .antMatchers(HttpMethod.DELETE,"/vivienda/**").hasAnyRole("ADMIN", "PROPIETARIO")
-                .antMatchers(HttpMethod.POST, "vivienda/**/inmobiliaria/**").hasAnyRole("ADMIN", "PROPIETARIO")
-                .antMatchers(HttpMethod.DELETE, "vivienda/**/inmobiliaria").hasAnyRole("ADMIN", "PROPIETARIO", "GESTOR")
-                .antMatchers(HttpMethod.POST,"/inmobiliaria/").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST,"/inmobiliaria/**/gestor").hasAnyRole("ADMIN", "GESTOR")
-                .antMatchers(HttpMethod.DELETE,"/inmobiliaria/gestor/**").hasAnyRole("ADMIN", "GESTOR")
-                .antMatchers(HttpMethod.GET,"/inmobiliaria/**/gestor").hasAnyRole("ADMIN", "GESTOR")
-                .antMatchers(HttpMethod.GET,"/inmobiliaria/").authenticated()
-                .antMatchers(HttpMethod.GET,"/inmobiliaria/**").authenticated()
-                .antMatchers(HttpMethod.DELETE,"/inmobiliaria/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/vivienda/**/meinteresa").hasRole("PROPIETARIO")
-                .antMatchers(HttpMethod.POST, "/vivienda/**/meinteresa").hasAnyRole("PROPIETARIO", "ADMIN")
-                .antMatchers(HttpMethod.GET, "/interesado/").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/interesado/**").hasAnyRole("ADMIN", "PROPIETARIO")
-                .antMatchers(HttpMethod.GET, "vivienda/top").authenticated()
-                .antMatchers(HttpMethod.GET, "/viviendas/propietario").hasRole("PROPIETARIO")
-                .antMatchers(HttpMethod.GET, "/viviendas/interesa").authenticated()
+                .antMatchers(HttpMethod.POST, "/auth/register").anonymous()
+                .antMatchers(HttpMethod.GET, "/download/{filename:.+}").permitAll()
                 .anyRequest().authenticated();
 
         

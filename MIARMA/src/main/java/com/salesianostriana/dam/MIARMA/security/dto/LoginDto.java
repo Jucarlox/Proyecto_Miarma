@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.realstatev2.security.dto;
+package com.salesianostriana.dam.MIARMA.security.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

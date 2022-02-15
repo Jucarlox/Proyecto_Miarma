@@ -1,9 +1,6 @@
-package com.salesianostriana.dam.realstatev2.users.model;
+package com.salesianostriana.dam.MIARMA.users.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.salesianostriana.dam.realstatev2.model.Inmobiliaria;
-import com.salesianostriana.dam.realstatev2.model.Interesa;
-import com.salesianostriana.dam.realstatev2.model.Vivienda;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,12 +18,7 @@ import java.util.stream.Collectors;
 
 
 
-@NamedEntityGraph(
-        name = User.USER_CON_VIVIENDA,
-        attributeNodes = {
-                @NamedAttributeNode("viviendas")
-        }
-)
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
@@ -34,7 +26,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 public class User implements UserDetails {
-    public static final String USER_CON_VIVIENDA= "grafo-user-con-vivienda";
     @Id @GeneratedValue(generator = "UUID")
     @GenericGenerator(
             name = "UUID",
@@ -54,32 +45,14 @@ public class User implements UserDetails {
 
     private String email;
     private String password;
-    private String nombre;
-    private String apellidos;
-    private String direccion;
-    private String telefono;
+    private String nick;
+    private Date fechaNacimiento;
 
     @Enumerated(EnumType.STRING)
     private UserRole roles;
     private String avatar;
 
-    @ManyToOne
-    @JoinColumn(name = "inmobiliaria_id", foreignKey = @ForeignKey(name = "FK_USER_INMOBILIARIA"), nullable = true)
-    private Inmobiliaria inmobiliaria;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "propietario",fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
-    @JsonIgnore
-    private List<Vivienda> viviendas=new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "interesado", fetch = FetchType.EAGER)
-    private List<Interesa> interesas = new ArrayList<>();
-
-    @PreRemove
-    public void preRemove(){
-        interesas.forEach(v -> v.setInteresado(null));
-    }
 
 
     @Override
@@ -115,16 +88,6 @@ public class User implements UserDetails {
         return true;
     }
 
-
-    public void addInmobiliaria(Inmobiliaria i) {
-        this.inmobiliaria = i;
-        i.getGestores().add(this);
-    }
-
-    public void removeInmobiliaria(Inmobiliaria i) {
-        i.getGestores().remove(this);
-        this.inmobiliaria = null;
-    }
 
 
 }

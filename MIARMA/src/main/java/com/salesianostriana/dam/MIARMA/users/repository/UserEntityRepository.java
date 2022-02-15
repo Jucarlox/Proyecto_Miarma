@@ -1,8 +1,8 @@
-package com.salesianostriana.dam.realstatev2.users.repository;
+package com.salesianostriana.dam.MIARMA.users.repository;
 
-import com.salesianostriana.dam.realstatev2.model.Vivienda;
-import com.salesianostriana.dam.realstatev2.users.model.User;
-import com.salesianostriana.dam.realstatev2.users.model.UserRole;
+
+import com.salesianostriana.dam.MIARMA.users.model.User;
+import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,8 +20,7 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
     @EntityGraph("grafo-user-con-vivienda")
     List<User> findAll();
 
-    @Query(value = "select *  from vivienda v where USER_ID = :userId" , nativeQuery=true)
-    List<Vivienda> findAllViviendasToPropietario(UUID userId);
+
 
 
 

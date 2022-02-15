@@ -1,8 +1,9 @@
-package com.salesianostriana.dam.realstatev2.users.dto;
+package com.salesianostriana.dam.MIARMA.users.dto;
 
-import com.salesianostriana.dam.realstatev2.users.model.UserRole;
+import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import lombok.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -12,11 +13,11 @@ import java.util.UUID;
 @Builder
 public class GetUserDto {
 
-    private String avatar;
-    private String nombre;
+    private String nick;
     private String email;
-    private String role;
-    private UUID id;
+    private Date fechaNacimiento;
+    private String avatar;
+
 
 
 }

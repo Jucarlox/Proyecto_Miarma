@@ -1,6 +1,6 @@
-package com.salesianostriana.dam.realstatev2.users.dto;
+package com.salesianostriana.dam.MIARMA.users.dto;
 
-import com.salesianostriana.dam.realstatev2.users.model.User;
+import com.salesianostriana.dam.MIARMA.users.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,10 +9,10 @@ public class UserDtoConverter {
     public GetUserDto convertUserEntityToGetUserDto(User user) {
         return GetUserDto.builder()
                 .avatar(user.getAvatar())
-                .nombre(user.getNombre())
+                .fechaNacimiento(user.getFechaNacimiento())
+                .nick(user.getNick())
                 .email(user.getEmail())
-                .role(user.getRoles().name())
-                .id(user.getId())
+
                 .build();
 
 

@@ -1,9 +1,13 @@
-package com.salesianostriana.dam.realstatev2.security;
+package com.salesianostriana.dam.MIARMA.security;
 
-import com.salesianostriana.dam.realstatev2.security.dto.JwtUserResponse;
-import com.salesianostriana.dam.realstatev2.security.dto.LoginDto;
-import com.salesianostriana.dam.realstatev2.security.jwt.JwtProvider;
-import com.salesianostriana.dam.realstatev2.users.model.User;
+import com.salesianostriana.dam.MIARMA.security.dto.JwtUserResponse;
+import com.salesianostriana.dam.MIARMA.security.dto.LoginDto;
+import com.salesianostriana.dam.MIARMA.security.jwt.JwtProvider;
+import com.salesianostriana.dam.MIARMA.users.model.User;
+import com.salesianostriana.dam.MIARMA.security.dto.JwtUserResponse;
+import com.salesianostriana.dam.MIARMA.security.dto.LoginDto;
+import com.salesianostriana.dam.MIARMA.security.jwt.JwtProvider;
+import com.salesianostriana.dam.MIARMA.users.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,9 +48,8 @@ public class AuthenticationController {
     }
     private JwtUserResponse convertUserToJwtUserResponse(User user, String jwt) {
         return JwtUserResponse.builder()
-                .nombre(user.getNombre())
+                .nike(user.getNick())
                 .email(user.getEmail())
-                .apellidos(user.getApellidos())
                 .role(user.getRoles().toString())
                 .token(jwt)
                 .build();

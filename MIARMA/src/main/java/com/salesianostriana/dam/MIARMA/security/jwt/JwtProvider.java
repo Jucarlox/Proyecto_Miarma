@@ -1,10 +1,10 @@
-package com.salesianostriana.dam.realstatev2.security.jwt;
+package com.salesianostriana.dam.MIARMA.security.jwt;
 
-import com.salesianostriana.dam.realstatev2.users.model.User;
+import com.salesianostriana.dam.MIARMA.users.model.User;
+
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;

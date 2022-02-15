@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.realstatev2.security;
+package com.salesianostriana.dam.MIARMA.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

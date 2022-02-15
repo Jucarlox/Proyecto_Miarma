@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.realstatev2.security.dto;
+package com.salesianostriana.dam.MIARMA.security.dto;
 
 import lombok.*;
 
@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 public class JwtUserResponse {
     private String email;
-    private String nombre;
-    private String apellidos;
+    private String nike;
+
     private String role;
     private String token;
 }
