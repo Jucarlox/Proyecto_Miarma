@@ -6,13 +6,20 @@ import com.salesianostriana.dam.MIARMA.exception.StorageException;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 
 import com.salesianostriana.dam.MIARMA.utils.MediaTypeUrlResource;
+import org.imgscalr.Scalr;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+
 import org.springframework.core.io.Resource;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -26,6 +33,10 @@ import java.util.stream.Stream;
 public class FileSystemStorageServiceImpl implements StorageService {
 
     private final Path rootLocation;
+
+    public static BufferedImage simpleImageResizer (BufferedImage bufferedImage, int targetWisth){
+        return Scalr.resize(bufferedImage, targetWisth);
+    }
 
     public FileSystemStorageServiceImpl(StorageProperties storageProperties ) {
         this.rootLocation = Paths.get(storageProperties.getLocation());
@@ -42,17 +53,17 @@ public class FileSystemStorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String store(MultipartFile file) {
+    public String original(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String newFilename = "";
         try {
-            // Si el fichero está vacío, excepción al canto
+
             if (file.isEmpty())
                 throw new StorageException("El fichero subido está vacío");
 
             newFilename = filename;
             while(Files.exists(rootLocation.resolve(newFilename))) {
-                // Tratamos de generar uno nuevo
+
                 String extension = StringUtils.getFilenameExtension(newFilename);
                 String name = newFilename.replace("."+extension,"");
 
@@ -77,6 +88,70 @@ public class FileSystemStorageServiceImpl implements StorageService {
         return newFilename;
 
     }
+
+
+
+
+
+
+
+    @Override
+    public String avatar(MultipartFile file) throws IOException {
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
+        String extension = StringUtils.getFilenameExtension(filename);
+        String name = filename.replace("."+ extension, "");
+
+        BufferedImage img = ImageIO.read(file.getInputStream());
+
+        BufferedImage escaleImg = simpleImageResizer(img, 128);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        ImageIO.write(escaleImg, extension, baos);
+
+        MultipartFile newImage = new MockMultipartFile(name, baos.toByteArray());
+
+        try {
+
+            if (file.isEmpty())
+                throw new StorageException("El fichero subido está vacío");
+
+
+            while(Files.exists(rootLocation.resolve(filename))) {
+
+
+
+
+                String suffix = Long.toString(System.currentTimeMillis());
+                suffix = suffix.substring(suffix.length()-6);
+
+                filename = name + "_" + suffix + "." + extension;
+
+            }
+
+            try (InputStream inputStream = newImage.getInputStream()) {
+                Files.copy(inputStream, rootLocation.resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+
+
+
+        } catch (IOException ex) {
+            throw new StorageException("Error en el almacenamiento del fichero: " + filename, ex);
+        }
+
+        return filename;
+    }
+
+
+
+
+
+
+
+
+
 
     @Override
     public Stream<Path> loadAll() {
@@ -123,4 +198,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
+
+
+
 }

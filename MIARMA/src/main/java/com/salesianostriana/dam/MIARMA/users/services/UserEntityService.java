@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
 
 import java.util.Optional;
@@ -47,10 +48,10 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
         return this.repositorio.findById(id);
     }
 
-    public User saveUser(CreateUserDto newUser, MultipartFile file) {
+    public User saveUser(CreateUserDto newUser, MultipartFile file) throws IOException {
 
 
-        String filename = storageService.store(file);
+        String filename = storageService.avatar(file);
 
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
@@ -66,7 +67,6 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
                     .email(newUser.getEmail())
                     .fechaNacimiento(newUser.getFechaNacimiento())
                     .roles(UserRole.USER)
-
                     .build();
             try{
                 return save(user);

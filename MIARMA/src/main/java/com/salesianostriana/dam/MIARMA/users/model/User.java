@@ -1,6 +1,8 @@
 package com.salesianostriana.dam.MIARMA.users.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
+import com.salesianostriana.dam.MIARMA.models.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -51,6 +53,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole roles;
     private String avatar;
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Post> postList;
 
 
 
