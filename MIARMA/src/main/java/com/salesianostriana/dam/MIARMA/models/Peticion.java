@@ -28,6 +28,9 @@ public class Peticion {
     @ManyToOne
     private User user;
 
+    @PreRemove
+    public void borrarDestinatarios(){user.setPeticionList(null);}
+
 
 
 }

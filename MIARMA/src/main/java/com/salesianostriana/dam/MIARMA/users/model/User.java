@@ -63,11 +63,8 @@ public class User implements UserDetails {
     private List<Post> postList;
 
 
-    @OneToMany
-    @JoinColumn(referencedColumnName = "id")
-    @JsonBackReference
-    @Builder.Default
-    private List<User> follows = new ArrayList<>();
+    @ManyToMany()
+    private List<User> followers = new ArrayList<>();
 
 
     @Builder.Default
@@ -126,13 +123,13 @@ public class User implements UserDetails {
     }
 
     public void addFollower(User u) {
-        if (this.getFollows() == null)
-            this.setFollows(new ArrayList<>());
-        this.getFollows().add(u);
+        this.followers = List.of(u);
+        u.getFollowers().add(this);
+
     }
 
     public void removeFollower(User u) {
-        this.getFollows().remove(u);
+        this.getFollowers().remove(u);
         u = null;
 
     }

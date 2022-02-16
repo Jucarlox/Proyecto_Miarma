@@ -1,6 +1,7 @@
 package com.salesianostriana.dam.MIARMA.users.services;
 
 
+import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.services.base.BaseService;
 import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
@@ -10,6 +11,7 @@ import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

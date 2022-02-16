@@ -6,6 +6,9 @@ import com.salesianostriana.dam.MIARMA.exception.StorageException;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 
 import com.salesianostriana.dam.MIARMA.utils.MediaTypeUrlResource;
+
+
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.imgscalr.Scalr;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,10 @@ import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
 import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -110,7 +112,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
         ImageIO.write(escaleImg, extension, baos);
 
-        MultipartFile newImage = new MockMultipartFile(name, baos.toByteArray());
+
+
+
+        InputStream inputStream2 = new ByteArrayInputStream(baos.toByteArray());
+
+
+
 
         try {
 
@@ -130,7 +138,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
             }
 
-            try (InputStream inputStream = newImage.getInputStream()) {
+            try (InputStream inputStream = inputStream2) {
                 Files.copy(inputStream, rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
@@ -160,6 +168,10 @@ public class FileSystemStorageServiceImpl implements StorageService {
         ImageIO.write(escaleImg, extension, baos);
 
         MultipartFile newImage = new MockMultipartFile(name, baos.toByteArray());
+
+
+
+
 
         try {
 

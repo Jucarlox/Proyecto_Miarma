@@ -64,7 +64,15 @@ public class PostController {
     public ResponseEntity<GetPostDto> getPostById(@PathVariable Long id, @AuthenticationPrincipal User user) throws IOException {
 
         Post post = postService.getPostById(id, user);
-        return ResponseEntity.ok().body(postDtoConverter.convertPostToGetPostDto(post));
+
+        if(post==null){
+            return ResponseEntity.badRequest().build();
+        }else{
+            return ResponseEntity.ok().body(postDtoConverter.convertPostToGetPostDto(post));
+        }
+
     }
+
+
 
 }

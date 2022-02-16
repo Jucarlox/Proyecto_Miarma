@@ -65,6 +65,7 @@ public class PostServiceImpl {
         }else {
             post.get().setDescripcion(newPost.getDescripcion());
             post.get().setTitle(newPost.getTitle());
+            post.get().setPrivacity(newPost.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO);
             if(!file.isEmpty()){
 
 
@@ -140,23 +141,25 @@ public class PostServiceImpl {
         return getPostDto;
     }
 
-    public Post getPostById(Long id, User user) throws IOException {
+    public Post getPostById(Long id, User user) {
 
         Optional<Post> post = postRepository.findById(id);
 
-        if(post.isPresent()){
-            if(post.get().getPrivacity().equals(Estado.PUBLICO)){
+        if(post.isEmpty()) {
+            return null;
+        }else {
+            if (post.get().getPrivacity().equals(Estado.PUBLICO)) {
                 return post.get();
+            } else {
+                for (User usuarioDeLaLista : user.getFollowers()) {
+                    if (usuarioDeLaLista.equals(post.get().getUser())) {
+                        return post.get();
+                    }else {
+                        return post.get();
+                    }
+                }
+                return null;
             }
-
-
-
         }
-
-
-        /*List<GetPostDto> getPostDto= postList.stream().map(p-> new GetPostDto(p.getId(),
-                p.getTitle(), p.getDescripcion(),p.getFileScale(), p.getPrivacity())).toList();*/
-
-        return null;
     }
 }

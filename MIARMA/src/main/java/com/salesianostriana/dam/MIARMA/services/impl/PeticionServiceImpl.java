@@ -43,12 +43,18 @@ public class PeticionServiceImpl {
         if(peticion.isPresent()){
 
             userLogeado.addFollower(peticion.get().getUser());
+            peticion.get().borrarDestinatarios();
             peticionRepository.deleteById(id);
-            userEntityRepository.save(userLogeado);
 
-            return userLogeado.getFollows();
-        }else {
+            return userLogeado.getFollowers();
+        }else{
             return null;
         }
+    }
+
+    public List<Peticion> findAll (){
+
+        return peticionRepository.findAll();
+
     }
 }

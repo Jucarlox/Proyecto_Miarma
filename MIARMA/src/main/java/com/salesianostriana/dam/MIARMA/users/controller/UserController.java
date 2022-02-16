@@ -2,16 +2,19 @@ package com.salesianostriana.dam.MIARMA.users.controller;
 
 import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
 import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto;
+import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto2;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.services.UserEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +36,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(userDtoConverter.convertUserEntityToGetUserDto(saved));
     }
+
+
+
 
 
 
