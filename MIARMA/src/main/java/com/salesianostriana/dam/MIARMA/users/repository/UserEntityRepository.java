@@ -6,6 +6,7 @@ import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,14 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
 
     @EntityGraph("grafo-followers-user")
     List<User> findAll();
+
+
+    @Query(value = """
+            SELECT * FROM user u
+            WHERE u.id = (SELECT user_id FROM follows
+                          WHERE following_id = :followed_id)
+            """,nativeQuery = true)
+    List<User> findFollowers(@Param("followed_id") UUID id);
 
 
 

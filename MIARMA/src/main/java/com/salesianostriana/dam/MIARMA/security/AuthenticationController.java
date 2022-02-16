@@ -1,9 +1,12 @@
 package com.salesianostriana.dam.MIARMA.security;
 
+import com.salesianostriana.dam.MIARMA.models.Post;
+import com.salesianostriana.dam.MIARMA.repository.PostRepository;
 import com.salesianostriana.dam.MIARMA.security.dto.JwtUserResponse;
 import com.salesianostriana.dam.MIARMA.security.dto.LoginDto;
 import com.salesianostriana.dam.MIARMA.security.jwt.JwtProvider;
 import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto;
+import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto3;
 import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.security.dto.JwtUserResponse;
@@ -23,12 +26,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final UserDtoConverter userDtoConverter;
+    private final PostRepository postRepository;
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
@@ -61,10 +67,13 @@ public class AuthenticationController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<GetUserDto> me(@AuthenticationPrincipal User userPrincipal){
-        GetUserDto getUserDto = userDtoConverter.convertUserEntityToGetUserDto2(userPrincipal);
+    public ResponseEntity<GetUserDto3> me(@AuthenticationPrincipal User userPrincipal){
+
+        GetUserDto3 getUserDto = userDtoConverter.convertUserEntityToGetUserDto(userPrincipal);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(getUserDto);
     }
+
+
 }

@@ -46,9 +46,24 @@ public class PeticionServiceImpl {
             peticion.get().borrarDestinatarios();
             peticionRepository.deleteById(id);
 
-            return userLogeado.getFollowers();
+            return userLogeado.getFollows();
         }else{
             return null;
+        }
+    }
+
+
+
+    public void rechazarSolicitud (Long id){
+
+        Optional<Peticion> peticion = peticionRepository.findById(id);
+
+        if(peticion.isPresent()){
+
+
+            peticionRepository.deleteById(id);
+
+
         }
     }
 

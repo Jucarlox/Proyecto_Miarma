@@ -167,7 +167,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
         ImageIO.write(escaleImg, extension, baos);
 
-        MultipartFile newImage = new MockMultipartFile(name, baos.toByteArray());
+        InputStream inputStream2 = new ByteArrayInputStream(baos.toByteArray());
 
 
 
@@ -185,7 +185,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
                 filename = name + "_" + suffix + "." + extension;
             }
-            try (InputStream inputStream = newImage.getInputStream()) {
+            try (InputStream inputStream = inputStream2) {
                 Files.copy(inputStream, rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }

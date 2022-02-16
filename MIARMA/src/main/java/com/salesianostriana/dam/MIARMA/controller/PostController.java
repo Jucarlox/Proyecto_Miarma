@@ -4,8 +4,10 @@ import com.salesianostriana.dam.MIARMA.Dto.Post.CreatePostDto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.PostDtoConverter;
 import com.salesianostriana.dam.MIARMA.models.Post;
+import com.salesianostriana.dam.MIARMA.repository.PostRepository;
 import com.salesianostriana.dam.MIARMA.services.impl.PostServiceImpl;
 import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto;
+import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,9 @@ public class PostController {
 
     private final PostServiceImpl postService;
     private final PostDtoConverter postDtoConverter;
+    private final PostRepository postRepository;
+    private final UserDtoConverter userDtoConverter;
+
 
 
     @PostMapping("/post")
@@ -70,6 +75,19 @@ public class PostController {
         }else{
             return ResponseEntity.ok().body(postDtoConverter.convertPostToGetPostDto(post));
         }
+
+    }
+
+
+    @GetMapping("/post/me")
+    public ResponseEntity<GetUserDto> getPostMe(@AuthenticationPrincipal User user) throws IOException {
+
+        List<Post> postList=postRepository.findByUser(user);
+
+        GetUserDto getUserDto = userDtoConverter.convertUserEntityToGetUserDto2(user, postList);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(getUserDto);
 
     }
 

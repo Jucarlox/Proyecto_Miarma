@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
 
+import com.salesianostriana.dam.MIARMA.models.Estado;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.models.Post;
 import lombok.AllArgsConstructor;
@@ -58,13 +59,19 @@ public class User implements UserDetails {
     private UserRole roles;
     private String avatar;
 
+    @Enumerated(EnumType.STRING)
+    private Estado privacity;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> postList;
 
-
-    @ManyToMany()
-    private List<User> followers = new ArrayList<>();
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "follows",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id"))
+    private List<User> follows = new ArrayList<>();
 
 
     @Builder.Default
@@ -123,13 +130,13 @@ public class User implements UserDetails {
     }
 
     public void addFollower(User u) {
-        this.followers = List.of(u);
-        u.getFollowers().add(this);
+        this.follows = List.of(u);
+        u.getFollows().add(this);
 
     }
 
     public void removeFollower(User u) {
-        this.getFollowers().remove(u);
+        this.getFollows().remove(u);
         u = null;
 
     }

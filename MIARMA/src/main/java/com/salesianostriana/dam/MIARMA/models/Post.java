@@ -5,6 +5,13 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@NamedEntityGraph(
+        name = "grafo-post-user",
+        attributeNodes = {
+                @NamedAttributeNode("user")
+        }
+)
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +35,7 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private Estado privacity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
 

@@ -1,16 +1,14 @@
 package com.salesianostriana.dam.MIARMA.Dto.Peticion;
 
-import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
-import com.salesianostriana.dam.MIARMA.models.Post;
 import org.springframework.stereotype.Component;
 @Component
-public class PublicacionDtoConverter {
+public class PeticionDtoConverter {
 
 
 
-        public GetPublicacionDto convertPublicacionToGetPublicacionDto(Peticion peticion) {
-            return GetPublicacionDto.builder()
+        public GetPeticionDto convertPeticionToGetPeticionDto(Peticion peticion) {
+            return GetPeticionDto.builder()
                     .id(peticion.getId())
                     .nick(peticion.getUser().getNick())
                     .idUser(peticion.getUser().getId())

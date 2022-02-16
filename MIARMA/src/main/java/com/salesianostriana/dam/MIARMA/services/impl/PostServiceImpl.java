@@ -9,6 +9,7 @@ import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.users.model.UserRole;
+import com.salesianostriana.dam.MIARMA.users.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class PostServiceImpl {
 
     private final StorageService storageService;
     private final PostRepository postRepository;
+    private final UserEntityRepository userEntityRepository;
 
     public Post savePost(CreatePostDto newPost, MultipartFile file, User user) throws IOException {
         String filenameOriginal = storageService.original(file);
@@ -151,11 +153,12 @@ public class PostServiceImpl {
             if (post.get().getPrivacity().equals(Estado.PUBLICO)) {
                 return post.get();
             } else {
-                for (User usuarioDeLaLista : user.getFollowers()) {
-                    if (usuarioDeLaLista.equals(post.get().getUser())) {
+
+                for (User usuarioDeLaLista : userEntityRepository.findFollowers(post.get().getUser().getId())) {
+                    if (usuarioDeLaLista.getId().equals(user.getId())) {
                         return post.get();
                     }else {
-                        return post.get();
+                        return null;
                     }
                 }
                 return null;

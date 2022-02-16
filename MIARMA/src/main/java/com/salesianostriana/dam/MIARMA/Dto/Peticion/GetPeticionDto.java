@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetPublicacionDto {
+public class GetPeticionDto {
     private Long id;
     private String nick;
     private UUID idUser;

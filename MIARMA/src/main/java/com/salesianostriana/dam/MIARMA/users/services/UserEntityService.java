@@ -1,11 +1,14 @@
 package com.salesianostriana.dam.MIARMA.users.services;
 
 
+import com.salesianostriana.dam.MIARMA.models.Estado;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.services.base.BaseService;
 import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
 
+import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto3;
+import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +21,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.salesianostriana.dam.MIARMA.users.repository.UserEntityRepository;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import java.util.Optional;
@@ -34,6 +40,8 @@ import java.util.UUID;
 public class UserEntityService extends BaseService<User, UUID, UserEntityRepository> implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final StorageService storageService;
+    private final UserEntityRepository userEntityRepository;
+    private final UserDtoConverter userDtoConverter;
 
 
     @Override
@@ -69,6 +77,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
                     .email(newUser.getEmail())
                     .fechaNacimiento(newUser.getFechaNacimiento())
                     .roles(UserRole.USER)
+                    .privacity(newUser.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO)
                     .build();
             try{
                 return save(user);
@@ -81,7 +90,57 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     }
 
 
+    public GetUserDto3 visializarPerfif(User user, UUID id){
 
+        Optional<User> userBuscado =userEntityRepository.findById(id);
+
+        if (userBuscado.isPresent()) {
+
+            if (userBuscado.get().getPrivacity().equals(Estado.PUBLICO)) {
+                return userDtoConverter.convertUserEntityToGetUserDto(userBuscado.get());
+            } else {
+                for (User usuarioDeLaLista : userEntityRepository.findFollowers(userBuscado.get().getId())) {
+                    if (usuarioDeLaLista.getId().equals(user.getId())) {
+                        return userDtoConverter.convertUserEntityToGetUserDto(userBuscado.get());
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public User userEdit(MultipartFile file, CreateUserDto createUserDto, User userLogeado) throws IOException {
+
+        userLogeado.setNick(createUserDto.getNick());
+        userLogeado.setEmail(createUserDto.getEmail());
+        userLogeado.setPassword(createUserDto.getPassword());
+        userLogeado.setFechaNacimiento(createUserDto.getFechaNacimiento());
+        userLogeado.setPrivacity(createUserDto.isPrivacity()? Estado.PRIVADO : Estado.PUBLICO);
+
+
+
+        String avatar = StringUtils.cleanPath(String.valueOf(userLogeado.getAvatar())).replace("http://localhost:8080/download/","");
+        Path path = storageService.load(avatar);
+        String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/","");
+        Path pathScalse = Paths.get(filename);
+        storageService.deleteFile(pathScalse);
+
+        String filenameAvatar = storageService.avatar(file);
+
+        String uriAvatar = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path(filenameAvatar)
+                .toUriString();
+
+        userLogeado.setAvatar(uriAvatar);
+
+
+
+        return repositorio.save(userLogeado);
+    }
 
 
 
