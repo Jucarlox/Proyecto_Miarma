@@ -1,6 +1,9 @@
 package com.salesianostriana.dam.MIARMA.users.services;
 
 
+import com.salesianostriana.dam.MIARMA.errores.excepciones.DynamicException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.EntityNotFoundException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.SingleEntityNotFoundException;
 import com.salesianostriana.dam.MIARMA.models.Estado;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
@@ -102,13 +105,12 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
                 for (User usuarioDeLaLista : userEntityRepository.findFollowers(userBuscado.get().getId())) {
                     if (usuarioDeLaLista.getId().equals(user.getId())) {
                         return userDtoConverter.convertUserEntityToGetUserDto(userBuscado.get());
-                    } else {
-                        return null;
                     }
                 }
+                throw new DynamicException("Cuenta privada, no sigues al usuario");
             }
-        }
-        return null;
+        } throw new SingleEntityNotFoundException(id.toString(),User.class);
+
     }
 
 
@@ -122,9 +124,11 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
 
 
 
-        String avatar = StringUtils.cleanPath(String.valueOf(userLogeado.getAvatar())).replace("http://localhost:8080/download/","");
+        String avatar = StringUtils.cleanPath(String.valueOf(userLogeado.getAvatar())).replace("http://localhost:8080/download/", "")
+                .replace("%20", " ");
         Path path = storageService.load(avatar);
-        String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/","");
+        String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
+                .replace("%20", " ");
         Path pathScalse = Paths.get(filename);
         storageService.deleteFile(pathScalse);
 

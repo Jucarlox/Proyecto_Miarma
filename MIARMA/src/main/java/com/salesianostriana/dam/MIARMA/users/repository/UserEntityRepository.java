@@ -30,6 +30,9 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
             """,nativeQuery = true)
     List<User> findFollowers(@Param("followed_id") UUID id);
 
+    boolean existsByNick(String nick);
+
+    boolean existsByEmail(String email);
 
 
     Optional<User> findByFollowsContains(User user);

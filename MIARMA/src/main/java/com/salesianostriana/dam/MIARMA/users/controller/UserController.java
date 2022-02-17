@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class UserController {
 
 
     @PostMapping("/auth/register")
-    public ResponseEntity<GetUserDto3> nuevoUsuario(@RequestPart("file")MultipartFile file, @RequestPart("user") CreateUserDto newPropietario) throws IOException {
+    public ResponseEntity<GetUserDto3> nuevoUsuario(@RequestPart("file")MultipartFile file,@Valid @RequestPart("user") CreateUserDto newPropietario) throws IOException {
         User saved = userEntityService.saveUser(newPropietario, file);
 
         if (saved == null)
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<GetUserDto3> visializarPerfif(@AuthenticationPrincipal User userPrincipal, @PathVariable UUID id){
+    public ResponseEntity<?> visializarPerfif(@AuthenticationPrincipal User userPrincipal, @PathVariable UUID id){
 
 
         return ResponseEntity.status(HttpStatus.OK)

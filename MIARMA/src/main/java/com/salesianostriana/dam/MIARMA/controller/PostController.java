@@ -45,7 +45,7 @@ public class PostController {
 
 
     @PutMapping("/post/{id}")
-    public ResponseEntity<?> editPost(@RequestPart("file") MultipartFile file, @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal, @PathVariable Long id) throws IOException {
+    public ResponseEntity<?> editPost(@RequestPart("file") MultipartFile file, @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal, @PathVariable Long id) throws IOException, VideoException {
         Post saved = postService.editPost(createPostDto, file, userPrincipal, id);
 
         if (saved == null)

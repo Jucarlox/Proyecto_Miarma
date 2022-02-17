@@ -1,6 +1,6 @@
 package com.salesianostriana.dam.MIARMA.utils;
 
-import com.salesianostriana.dam.MIARMA.exception.StorageException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.StorageException;
 import org.apache.tika.Tika;
 
 

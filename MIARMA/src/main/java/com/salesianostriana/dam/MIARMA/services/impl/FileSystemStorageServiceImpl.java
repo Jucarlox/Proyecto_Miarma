@@ -1,8 +1,8 @@
 package com.salesianostriana.dam.MIARMA.services.impl;
 
 import com.salesianostriana.dam.MIARMA.config.StorageProperties;
-import com.salesianostriana.dam.MIARMA.exception.FileNotFoundException;
-import com.salesianostriana.dam.MIARMA.exception.StorageException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.FileNotFoundException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.StorageException;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 
 import com.salesianostriana.dam.MIARMA.utils.MediaTypeUrlResource;
@@ -14,9 +14,7 @@ import io.github.techgnious.dto.IVSize;
 import io.github.techgnious.dto.IVVideoAttributes;
 import io.github.techgnious.dto.VideoFormats;
 import io.github.techgnious.exception.VideoException;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.imgscalr.Scalr;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
@@ -26,7 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
 import org.springframework.core.io.Resource;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -35,8 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 @Service
@@ -146,29 +142,21 @@ public class FileSystemStorageServiceImpl implements StorageService {
         customRes.setWidth(400);
         customRes.setHeight(300);
         IVAudioAttributes audioAttribute = new IVAudioAttributes();
-// here 64kbit/s is 64000
+
         audioAttribute.setBitRate(64000);
         audioAttribute.setChannels(2);
         audioAttribute.setSamplingRate(44100);
         IVVideoAttributes videoAttribute = new IVVideoAttributes();
-// Here 160 kbps video is 160000
+
         videoAttribute.setBitRate(160000);
-// More the frames more quality and size, but keep it low based on //devices like mobile
+
         videoAttribute.setFrameRate(15);
         videoAttribute.setSize(customRes);
+
+
         byte[] video = compressor.encodeVideoWithAttributes(file.getBytes(), VideoFormats.MP4,audioAttribute, videoAttribute);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ByteArrayInputStream bios = new ByteArrayInputStream();
-        bios.readAllBytes(video);
-        baos.toByteArray(video);
-        video.
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(escaleImg, extension, baos);
-
-        InputStream inputStream2 = new ByteArrayInputStream(baos.toByteArray());
-
+        InputStream inputStreamEscalado = new ByteArrayInputStream(video);
         try {
             if (file.isEmpty())
                 throw new StorageException("El fichero subido está vacío");
@@ -180,7 +168,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
                 filename = name + "_" + suffix + "." + extension;
             }
-            try (InputStream inputStream = inputStream2) {
+            try (InputStream inputStream = inputStreamEscalado) {
                 Files.copy(inputStream, rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
@@ -240,7 +228,6 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void deleteFile(Path filename) throws IOException {
 
         MediaTypeUrlResource mediaTypeUrlResource = new MediaTypeUrlResource(filename.toUri());
-
         try {
             if (mediaTypeUrlResource.exists() || mediaTypeUrlResource.isReadable()) {
                 Files.delete(filename);
@@ -251,6 +238,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
         }catch (MalformedURLException e) {
             throw new FileNotFoundException("Could not read file: " + filename, e);
         }
+
     }
 
     @Override

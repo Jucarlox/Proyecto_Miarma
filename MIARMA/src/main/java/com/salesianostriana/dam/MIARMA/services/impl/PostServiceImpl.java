@@ -73,7 +73,7 @@ public class PostServiceImpl {
     }
 
 
-    public Post editPost(CreatePostDto newPost, MultipartFile file, User user, Long id) throws IOException {
+    public Post editPost(CreatePostDto newPost, MultipartFile file, User user, Long id) throws IOException, VideoException {
 
 
         Optional<Post> post = postRepository.findById(id);
@@ -87,21 +87,37 @@ public class PostServiceImpl {
             if(!file.isEmpty()){
 
 
-                String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/","");
+                String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/", "")
+                        .replace("%20", " ");
                 Path path = storageService.load(scale);
-                String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/","");
+                String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
+                        .replace("%20", " ");
                 Path pathScalse = Paths.get(filename);
                 storageService.deleteFile(pathScalse);
 
 
-                String original = StringUtils.cleanPath(String.valueOf(post.get().getFileOriginal())).replace("http://localhost:8080/download/","");
+                String original = StringUtils.cleanPath(String.valueOf(post.get().getFileOriginal())).replace("http://localhost:8080/download/", "")
+                        .replace("%20", " ");
                 Path path2 = storageService.load(original);
-                String filename2 = StringUtils.cleanPath(String.valueOf(path2)).replace("http://localhost:8080/download/","");
+                String filename2 = StringUtils.cleanPath(String.valueOf(path2)).replace("http://localhost:8080/download/", "")
+                        .replace("%20", " ");
                 Path pathOriginal = Paths.get(filename2);
                 storageService.deleteFile(pathOriginal);
 
+                List<String> videoExtension = Arrays.asList("webm","mkv","flv","vob","ogv","ogg",
+                        "rrc","gifv","mng","mov","avi","qt","wmv","yuv","rm","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe",
+                        "mpv","m4v","svi","3gp","3gpp","3g2","mxf","roq","nsv","flv","f4v","f4p","f4a","f4b","mod");
+
+                String extension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
+
                 String filenameOriginal = storageService.original(file);
-                String filenamePublicacion = storageService.escalado(file,1024);
+                String filenamePublicacion;
+                if(!videoExtension.contains(extension)){
+                    filenamePublicacion = storageService.escalado(file, 1024);
+
+                }else {
+                    filenamePublicacion = storageService.videoEscalado(file);
+                }
 
                 String uriPublicacion = ServletUriComponentsBuilder.fromCurrentContextPath()
                         .path("/download/")
@@ -129,16 +145,20 @@ public class PostServiceImpl {
         if(post.isEmpty()){
             return ResponseEntity.noContent().build();
         }else {
-            String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/","");
+            String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/", "")
+                    .replace("%20", " ");
             Path path = storageService.load(scale);
-            String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/","");
+            String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
+                    .replace("%20", " ");
             Path pathScalse = Paths.get(filename);
             storageService.deleteFile(pathScalse);
 
 
-            String original = StringUtils.cleanPath(String.valueOf(post.get().getFileOriginal())).replace("http://localhost:8080/download/","");
+            String original = StringUtils.cleanPath(String.valueOf(post.get().getFileOriginal())).replace("http://localhost:8080/download/", "")
+                    .replace("%20", " ");
             Path path2 = storageService.load(original);
-            String filename2 = StringUtils.cleanPath(String.valueOf(path2)).replace("http://localhost:8080/download/","");
+            String filename2 = StringUtils.cleanPath(String.valueOf(path2)).replace("http://localhost:8080/download/", "")
+                    .replace("%20", " ");
             Path pathOriginal = Paths.get(filename2);
             storageService.deleteFile(pathOriginal);
 

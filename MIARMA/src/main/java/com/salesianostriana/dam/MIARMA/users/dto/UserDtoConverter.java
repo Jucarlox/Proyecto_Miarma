@@ -33,6 +33,7 @@ public class UserDtoConverter {
                 .fechaNacimiento(user.getFechaNacimiento())
                 .nick(user.getNick())
                 .email(user.getEmail())
+                .estado(user.getPrivacity())
                 .postList(postList.stream().map(p -> new GetPostDto(p.getId(),p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList())
                 .build();
 
