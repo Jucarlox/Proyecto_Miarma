@@ -1,5 +1,6 @@
 package com.salesianostriana.dam.MIARMA.services;
 
+import io.github.techgnious.exception.VideoException;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,10 +15,6 @@ public interface StorageService {
 
     String original(MultipartFile file);
 
-    String avatar(MultipartFile file) throws IOException;
-
-    String publicacion(MultipartFile file) throws IOException;
-
     Stream<Path> loadAll();
 
     Path load(String filename);
@@ -27,5 +24,9 @@ public interface StorageService {
     void deleteFile(Path filename) throws IOException;
 
     void deleteAll();
+
+    String escalado(MultipartFile file, int size) throws IOException;
+
+    String videoEscalado(MultipartFile file) throws IOException, VideoException;
 
 }

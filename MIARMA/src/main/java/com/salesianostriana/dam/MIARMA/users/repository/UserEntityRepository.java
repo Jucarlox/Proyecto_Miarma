@@ -32,6 +32,10 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
 
 
 
+    Optional<User> findByFollowsContains(User user);
+
+
+
 
 
 }

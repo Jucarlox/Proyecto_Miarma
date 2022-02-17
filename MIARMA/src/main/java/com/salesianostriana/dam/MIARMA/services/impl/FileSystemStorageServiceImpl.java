@@ -8,6 +8,12 @@ import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.utils.MediaTypeUrlResource;
 
 
+import io.github.techgnious.IVCompressor;
+import io.github.techgnious.dto.IVAudioAttributes;
+import io.github.techgnious.dto.IVSize;
+import io.github.techgnious.dto.IVVideoAttributes;
+import io.github.techgnious.dto.VideoFormats;
+import io.github.techgnious.exception.VideoException;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.imgscalr.Scalr;
 import org.springframework.mock.web.MockMultipartFile;
@@ -29,6 +35,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -58,6 +66,8 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public String original(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String newFilename = "";
+
+
         try {
 
             if (file.isEmpty())
@@ -73,16 +83,11 @@ public class FileSystemStorageServiceImpl implements StorageService {
                 suffix = suffix.substring(suffix.length()-6);
 
                 newFilename = name + "_" + suffix + "." + extension;
-
             }
-
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, rootLocation.resolve(newFilename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
-
-
-
         } catch (IOException ex) {
             throw new StorageException("Error en el almacenamiento del fichero: " + newFilename, ex);
         }
@@ -90,15 +95,8 @@ public class FileSystemStorageServiceImpl implements StorageService {
         return newFilename;
 
     }
-
-
-
-
-
-
-
     @Override
-    public String avatar(MultipartFile file) throws IOException {
+    public String escalado(MultipartFile file, int size) throws IOException {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
         String extension = StringUtils.getFilenameExtension(filename);
@@ -106,62 +104,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
         BufferedImage img = ImageIO.read(file.getInputStream());
 
-        BufferedImage escaleImg = simpleImageResizer(img, 128);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        ImageIO.write(escaleImg, extension, baos);
-
-
-
-
-        InputStream inputStream2 = new ByteArrayInputStream(baos.toByteArray());
-
-
-
-
-        try {
-
-            if (file.isEmpty())
-                throw new StorageException("El fichero subido está vacío");
-
-
-            while(Files.exists(rootLocation.resolve(filename))) {
-
-
-
-
-                String suffix = Long.toString(System.currentTimeMillis());
-                suffix = suffix.substring(suffix.length()-6);
-
-                filename = name + "_" + suffix + "." + extension;
-
-            }
-
-            try (InputStream inputStream = inputStream2) {
-                Files.copy(inputStream, rootLocation.resolve(filename),
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
-
-
-
-        } catch (IOException ex) {
-            throw new StorageException("Error en el almacenamiento del fichero: " + filename, ex);
-        }
-
-        return filename;
-    }
-
-    @Override
-    public String publicacion(MultipartFile file) throws IOException {
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
-
-        String extension = StringUtils.getFilenameExtension(filename);
-        String name = filename.replace("."+ extension, "");
-
-        BufferedImage img = ImageIO.read(file.getInputStream());
-
-        BufferedImage escaleImg = simpleImageResizer(img, 1024);
+        BufferedImage escaleImg = simpleImageResizer(img, size);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -169,12 +112,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
         InputStream inputStream2 = new ByteArrayInputStream(baos.toByteArray());
 
-
-
-
-
         try {
-
             if (file.isEmpty())
                 throw new StorageException("El fichero subido está vacío");
 
@@ -195,6 +133,71 @@ public class FileSystemStorageServiceImpl implements StorageService {
         }
         return filename;
     }
+
+    @Override
+    public String videoEscalado(MultipartFile file) throws IOException, VideoException {
+
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        String extension = StringUtils.getFilenameExtension(filename);
+        String name = filename.replace("."+ extension, "");
+
+        IVCompressor compressor = new IVCompressor();
+        IVSize customRes = new IVSize();
+        customRes.setWidth(400);
+        customRes.setHeight(300);
+        IVAudioAttributes audioAttribute = new IVAudioAttributes();
+// here 64kbit/s is 64000
+        audioAttribute.setBitRate(64000);
+        audioAttribute.setChannels(2);
+        audioAttribute.setSamplingRate(44100);
+        IVVideoAttributes videoAttribute = new IVVideoAttributes();
+// Here 160 kbps video is 160000
+        videoAttribute.setBitRate(160000);
+// More the frames more quality and size, but keep it low based on //devices like mobile
+        videoAttribute.setFrameRate(15);
+        videoAttribute.setSize(customRes);
+        byte[] video = compressor.encodeVideoWithAttributes(file.getBytes(), VideoFormats.MP4,audioAttribute, videoAttribute);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayInputStream bios = new ByteArrayInputStream();
+        bios.readAllBytes(video);
+        baos.toByteArray(video);
+        video.
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(escaleImg, extension, baos);
+
+        InputStream inputStream2 = new ByteArrayInputStream(baos.toByteArray());
+
+        try {
+            if (file.isEmpty())
+                throw new StorageException("El fichero subido está vacío");
+
+
+            while(Files.exists(rootLocation.resolve(filename))) {
+                String suffix = Long.toString(System.currentTimeMillis());
+                suffix = suffix.substring(suffix.length()-6);
+
+                filename = name + "_" + suffix + "." + extension;
+            }
+            try (InputStream inputStream = inputStream2) {
+                Files.copy(inputStream, rootLocation.resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+
+        } catch (IOException ex) {
+            throw new StorageException("Error en el almacenamiento del fichero: " + filename, ex);
+        }
+
+        return filename;
+
+    }
+
+
+
+
+
+
 
 
     @Override
@@ -254,6 +257,14 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
+
+
+
+
+
+
+
+
 
 
 

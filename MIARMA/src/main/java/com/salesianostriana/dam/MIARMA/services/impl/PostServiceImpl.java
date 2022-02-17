@@ -2,6 +2,7 @@ package com.salesianostriana.dam.MIARMA.services.impl;
 
 import com.salesianostriana.dam.MIARMA.Dto.Post.CreatePostDto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
+import com.salesianostriana.dam.MIARMA.Dto.Post.PostDtoConverter;
 import com.salesianostriana.dam.MIARMA.models.Estado;
 import com.salesianostriana.dam.MIARMA.models.Post;
 import com.salesianostriana.dam.MIARMA.repository.PostRepository;
@@ -10,6 +11,7 @@ import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import com.salesianostriana.dam.MIARMA.users.repository.UserEntityRepository;
+import io.github.techgnious.exception.VideoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +32,24 @@ public class PostServiceImpl {
     private final StorageService storageService;
     private final PostRepository postRepository;
     private final UserEntityRepository userEntityRepository;
+    private final PostDtoConverter postDtoConverter;
 
-    public Post savePost(CreatePostDto newPost, MultipartFile file, User user) throws IOException {
+    public Post savePost(CreatePostDto newPost, MultipartFile file, User user) throws IOException, VideoException {
         String filenameOriginal = storageService.original(file);
-        String filenamePublicacion = storageService.publicacion(file);
+
+        List<String> videoExtension = Arrays.asList("webm","mkv","flv","vob","ogv","ogg",
+                "rrc","gifv","mng","mov","avi","qt","wmv","yuv","rm","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe",
+                "mpv","m4v","svi","3gp","3gpp","3g2","mxf","roq","nsv","flv","f4v","f4p","f4a","f4b","mod");
+
+        String extension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
+        String filenamePublicacion;
+        if(!videoExtension.contains(extension)){
+            filenamePublicacion = storageService.escalado(file, 1024);
+
+        }else {
+            filenamePublicacion = storageService.videoEscalado(file);
+        }
+
 
         String uriPublicacion = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
@@ -85,7 +101,7 @@ public class PostServiceImpl {
                 storageService.deleteFile(pathOriginal);
 
                 String filenameOriginal = storageService.original(file);
-                String filenamePublicacion = storageService.publicacion(file);
+                String filenamePublicacion = storageService.escalado(file,1024);
 
                 String uriPublicacion = ServletUriComponentsBuilder.fromCurrentContextPath()
                         .path("/download/")
@@ -164,5 +180,46 @@ public class PostServiceImpl {
                 return null;
             }
         }
+    }
+
+    public List<GetPostDto> getPostByNick(String nick, User user) {
+        List<Post> postList = postRepository.findAll();
+        List<Post> postList1 = postRepository.findByUserNick(nick);
+        List<Post> postList2 = postRepository.busquedaPorNick(Estado.PUBLICO, nick);
+        Optional<User> userNick = userEntityRepository.findByNick(nick);
+        Optional<User> seguidor = userEntityRepository.findByFollowsContains(user);
+
+
+
+        if(postList.isEmpty() && postList1.isEmpty() && postList2.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }else if (!userNick.get().getNick().equals(seguidor.get().getNick())){
+            return postList2.stream().map(postDtoConverter::convertPostToGetPostDto).collect(Collectors.toList());
+        }else{
+            return postList1.stream().map(postDtoConverter::convertPostToGetPostDto).collect(Collectors.toList());
+        }
+
+    }
+
+
+
+    public List<GetPostDto> findAllPublicationsOfOneUser(String nick, User user){
+
+        List<Post> publicacionList = postRepository.findAll();
+        List<Post> publicacionList1 = postRepository.findByUserNick(nick);
+        List<Post> publicacionList2 = postRepository.busquedaPorNick(Estado.PUBLICO, nick);
+        Optional<User> userEntity = userEntityRepository.findByNick(nick);
+        Optional<User> seguidor = userEntityRepository.findByFollowsContains(user);
+
+        if(publicacionList.isEmpty() && publicacionList1.isEmpty() && publicacionList2.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }else if (!userEntity.equals(seguidor)){
+
+            return publicacionList2.stream().map(postDtoConverter::convertPostToGetPostDto).collect(Collectors.toList());
+
+        }else{
+            return publicacionList1.stream().map(postDtoConverter::convertPostToGetPostDto).collect(Collectors.toList());
+        }
+
     }
 }

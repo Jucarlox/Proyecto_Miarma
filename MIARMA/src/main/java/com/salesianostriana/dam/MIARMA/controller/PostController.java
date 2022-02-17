@@ -9,6 +9,7 @@ import com.salesianostriana.dam.MIARMA.services.impl.PostServiceImpl;
 import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto;
 import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
+import io.github.techgnious.exception.VideoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class PostController {
 
 
     @PostMapping("/post")
-    public ResponseEntity<?> nuevoPost(@RequestPart("file") MultipartFile file, @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal) throws IOException {
+    public ResponseEntity<?> nuevoPost(@RequestPart("file") MultipartFile file, @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal) throws IOException, VideoException {
         Post saved = postService.savePost(createPostDto, file, userPrincipal);
 
         if (saved == null)
@@ -89,6 +90,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(getUserDto);
 
+    }
+
+    @GetMapping("/post/")
+    public ResponseEntity<List<GetPostDto>> getPostByNick(@RequestParam(value = "nick") String nick, @AuthenticationPrincipal User user){
+        List<GetPostDto> postDtoList = postService.findAllPublicationsOfOneUser(nick, user);
+
+        return ResponseEntity.ok().body(postDtoList);
     }
 
 

@@ -61,7 +61,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     public User saveUser(CreateUserDto newUser, MultipartFile file) throws IOException {
 
 
-        String filename = storageService.avatar(file);
+        String filename = storageService.escalado(file,128);
 
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
@@ -128,7 +128,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
         Path pathScalse = Paths.get(filename);
         storageService.deleteFile(pathScalse);
 
-        String filenameAvatar = storageService.avatar(file);
+        String filenameAvatar = storageService.escalado(file, 128);
 
         String uriAvatar = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
