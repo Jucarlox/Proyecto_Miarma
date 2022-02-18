@@ -25,6 +25,7 @@ Caso 1:
 Perfil Publico
 1. Crear usuario Publico
 2. Buscarlo en la peticion Visualizar perfil
+
 Caso 2:
 Perfil Privado:
 1. Crear usuario Privado
