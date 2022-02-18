@@ -59,7 +59,10 @@ Perfil Privado:
 
 ### Historia de Usuario: GET /post/public
 
-1. Hazla la peticion
+1. Crear usuario
+2. Logearte
+3. Crear post publico
+4. Hacer la peticion
 
 ### Historia de Usuario: GET post/{id}
 
@@ -74,6 +77,54 @@ Publicacion Privada
 2. Usuario1 manda solicitud a Usuario2
 3. Usuario2 acepta solicitud y crea un post privado
 4. Usuario1 hace la peticion para ver el post privado
+
+### Historia de Usuario: GET /post/me
+
+1. Crear usuario
+2. Logearte
+3. Crear post publicos o privados
+4. Hacer la peticion
+
+### Historia de Usuario: GET /post/?nick=
+
+Caso 1:
+Perfil Publico
+1. Crear usuario Publico
+2. Hacer la peticion
+Caso 2:
+Perfil Privado
+1. Crear usuario Privado y otro cualquiera
+2. Usuario2 manda solicitud
+3. UsuarioPrivado acepta la solicitud
+4. UsuarioPrivado crea post
+5. Usuario2 se logea y hace la peticion con el nick del UsuarioPrivado
+
+### Historia de Usuario: POST /follow/{nick}
+
+1. Crear dos Usuarios
+2. Logearte con Usuario1
+3. Hacer la peticion con el nick de Usuario2
+
+### Historia de Usuario: POST /follow/accept/{id}
+
+1. Mandar solicitud
+2. Logearte con el usuario que le llego la peticion
+3. Aceptar la solicitud con el id de la peticion que se envio (si no te acuerdas puedes ver todas las solicitudes con la peticion "/follow/list")
+
+### Historia de Usuario: DELETE /follow/decline/1
+
+1. Mandar solicitud
+2. Logearte con el usuario que le llego la peticion
+3. Eliminar la solicitud con el id de la peticion que se envio (si no te acuerdas puedes ver todas las solicitudes con la peticion "/follow/list")
+
+
+### Historia de Usuario: GET /follow/list
+
+1. Mandar solicitud
+2. Logearte con el usuario que le llego la peticion
+3. Hacer la peticion con el usuario al que se le mando la solicitud
+
+
 
 
 
