@@ -75,7 +75,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
                     .path(filename)
                     .toUriString();
 
-            if (newUser.getPassword().contentEquals(newUser.getPassword2())) {
+
                 User user = User.builder()
                         .password(passwordEncoder.encode(newUser.getPassword()))
                         .avatar(uri)
@@ -90,9 +90,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
                 } catch (DataIntegrityViolationException ex) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de ese usuario ya existe");
                 }
-            } else {
-                throw new DynamicException("Las contraseñas no coinciden");
-            }
+
         } else {
             throw new UnsupportedMediaType(imagenExtension);
         }
@@ -100,7 +98,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     }
 
 
-    public GetUserDto3 visializarPerfif(User user, UUID id) {
+    public GetUserDto3  visializarPerfif(User user, UUID id) {
 
         Optional<User> userBuscado = userEntityRepository.findById(id);
 

@@ -1,5 +1,6 @@
 package com.salesianostriana.dam.MIARMA.services.impl;
 
+import com.salesianostriana.dam.MIARMA.errores.excepciones.DynamicException;
 import com.salesianostriana.dam.MIARMA.errores.excepciones.NickUserNotFoundException;
 import com.salesianostriana.dam.MIARMA.errores.excepciones.SingleEntityNotFoundException;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
@@ -24,15 +25,19 @@ public class PeticionServiceImpl {
         Optional<User> userBuscado = userEntityRepository.findByNick(nick);
 
         if (userBuscado.isPresent()) {
-            Peticion peticion = Peticion.builder()
-                    .user(userLogeado)
-                    .build();
+            if (!userBuscado.get().getNick().equals(userLogeado.getNick())) {
 
 
-            userBuscado.get().addPeticion(peticion);
-            peticionRepository.save(peticion);
+                Peticion peticion = Peticion.builder()
+                        .user(userLogeado)
+                        .build();
 
-            return peticion;
+
+                userBuscado.get().addPeticion(peticion);
+                peticionRepository.save(peticion);
+
+                return peticion;
+            } throw new DynamicException("No puedes mandarte solicitud a ti mismo");
         } else {
             throw new NickUserNotFoundException(nick, User.class);
         }

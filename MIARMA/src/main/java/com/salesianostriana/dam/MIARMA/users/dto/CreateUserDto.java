@@ -18,7 +18,7 @@ import java.util.Date;
 @Builder
 @PasswordsMatch(
         passwordField = "password",
-        verifyPasswordField = "verifyPassword",
+        verifyPasswordField = "password2",
         message = "Las contraseñas no coinciden"
 )
 public class CreateUserDto {
@@ -28,7 +28,8 @@ public class CreateUserDto {
     @UserEmailUniqueValueMatch(message = "Ya hay otro usuario con ese email")
     @Email
     private String email;
-    @NotEmpty
+
+
     private Date fechaNacimiento;
     private String avatar;
     private boolean privacity;
