@@ -25,14 +25,14 @@
     - Perfil Publico
     1. Crear usuario Publico
     2. Buscarlo en la peticion Visualizar perfil
-
-    - Perfil Privado
+1. Caso 2:
+Perfil Privado:
     1. Crear usuario Privado
     2. Crear otro usuario
     3. Mandar solicitud al usuario privado
     4. Aceptar solicitud desde el usuario privado
     5. Cambiar al otro usuario y Buscar al usuario privado en la peticion Visualizar perfil
-    
+
 
 
 
