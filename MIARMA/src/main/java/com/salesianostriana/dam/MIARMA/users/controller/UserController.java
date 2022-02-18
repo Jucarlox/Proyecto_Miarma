@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/profile/me")
-    public ResponseEntity<?> editUser(@RequestPart("file") MultipartFile file, @Valid @RequestPart("user") CreateUserDto createUserDto, @AuthenticationPrincipal User userPrincipal) throws IOException {
+    public ResponseEntity<?> editUser(@RequestPart("file") MultipartFile file, @Valid @RequestPart("user") CreateUserDtoEdit createUserDto, @AuthenticationPrincipal User userPrincipal) throws IOException {
         User userEditado = userEntityService.userEdit(file, createUserDto, userPrincipal);
 
         return ResponseEntity.status(HttpStatus.CREATED)

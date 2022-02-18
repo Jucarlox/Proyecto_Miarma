@@ -86,18 +86,75 @@ public class PostServiceImpl {
         if (post.isEmpty()) {
             throw new SingleEntityNotFoundException(id.toString(), Post.class);
         } else {
-            post.get().setDescripcion(newPost.getDescripcion());
-            post.get().setTitle(newPost.getTitle());
-            post.get().setPrivacity(newPost.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO);
+            if(post.get().getUser().getNick().equals(user.getNick())){
+                post.get().setDescripcion(newPost.getDescripcion());
+                post.get().setTitle(newPost.getTitle());
+                post.get().setPrivacity(newPost.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO);
 
 
-            String videoExtension = "mp4";
-            String extension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
-            List<String> allExtension = Arrays.asList("png", "gif", "jpg", "svg", "mp4");
+                String videoExtension = "mp4";
+                String extension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
+                List<String> allExtension = Arrays.asList("png", "gif", "jpg", "svg", "mp4");
 
-            if (!allExtension.contains(extension)) {
-                throw new UnsupportedMediaType(allExtension);
-            } else {
+                if (!allExtension.contains(extension)) {
+                    throw new UnsupportedMediaType(allExtension);
+                } else {
+                    String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/", "")
+                            .replace("%20", " ");
+                    Path path = storageService.load(scale);
+                    String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
+                            .replace("%20", " ");
+                    Path pathScalse = Paths.get(filename);
+                    storageService.deleteFile(pathScalse);
+
+
+                    String original = StringUtils.cleanPath(String.valueOf(post.get().getFileOriginal())).replace("http://localhost:8080/download/", "")
+                            .replace("%20", " ");
+                    Path path2 = storageService.load(original);
+                    String filename2 = StringUtils.cleanPath(String.valueOf(path2)).replace("http://localhost:8080/download/", "")
+                            .replace("%20", " ");
+                    Path pathOriginal = Paths.get(filename2);
+                    storageService.deleteFile(pathOriginal);
+
+
+                    String filenameOriginal = storageService.original(file);
+                    String filenamePublicacion;
+                    if (!videoExtension.contains(extension)) {
+                        filenamePublicacion = storageService.escalado(file, 1024);
+
+                    } else {
+                        filenamePublicacion = storageService.videoEscalado(file);
+                    }
+
+                    String uriPublicacion = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/download/")
+                            .path(filenamePublicacion)
+                            .toUriString();
+
+                    String uriOriginal = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/download/")
+                            .path(filenameOriginal)
+                            .toUriString();
+
+                    post.get().setFileOriginal(uriOriginal);
+                    post.get().setFileScale(uriPublicacion);
+
+                }
+            }else {
+                throw new DynamicException("No eres propietario de este post");
+            }
+
+            return postRepository.save(post.get());
+        }
+    }
+
+
+    public ResponseEntity deletePost(User user, Long id) throws IOException {
+        Optional<Post> post = postRepository.findById(id);
+        if (post.isEmpty()) {
+            throw new SingleEntityNotFoundException(id.toString(), Post.class);
+        } else {
+            if(post.get().getUser().getNick().equals(user.getNick())){
                 String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/", "")
                         .replace("%20", " ");
                 Path path = storageService.load(scale);
@@ -115,60 +172,13 @@ public class PostServiceImpl {
                 Path pathOriginal = Paths.get(filename2);
                 storageService.deleteFile(pathOriginal);
 
+                postRepository.deleteById(id);
 
-                String filenameOriginal = storageService.original(file);
-                String filenamePublicacion;
-                if (!videoExtension.contains(extension)) {
-                    filenamePublicacion = storageService.escalado(file, 1024);
-
-                } else {
-                    filenamePublicacion = storageService.videoEscalado(file);
-                }
-
-                String uriPublicacion = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/download/")
-                        .path(filenamePublicacion)
-                        .toUriString();
-
-                String uriOriginal = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/download/")
-                        .path(filenameOriginal)
-                        .toUriString();
-
-                post.get().setFileOriginal(uriOriginal);
-                post.get().setFileScale(uriPublicacion);
-
+                return ResponseEntity.noContent().build();
+            }else {
+                throw new DynamicException("No eres propietario de este post");
             }
-            return postRepository.save(post.get());
-        }
-    }
 
-
-    public ResponseEntity deletePost(User user, Long id) throws IOException {
-        Optional<Post> post = postRepository.findById(id);
-        if (post.isEmpty()) {
-            throw new SingleEntityNotFoundException(id.toString(), Post.class);
-        } else {
-            String scale = StringUtils.cleanPath(String.valueOf(post.get().getFileScale())).replace("http://localhost:8080/download/", "")
-                    .replace("%20", " ");
-            Path path = storageService.load(scale);
-            String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
-                    .replace("%20", " ");
-            Path pathScalse = Paths.get(filename);
-            storageService.deleteFile(pathScalse);
-
-
-            String original = StringUtils.cleanPath(String.valueOf(post.get().getFileOriginal())).replace("http://localhost:8080/download/", "")
-                    .replace("%20", " ");
-            Path path2 = storageService.load(original);
-            String filename2 = StringUtils.cleanPath(String.valueOf(path2)).replace("http://localhost:8080/download/", "")
-                    .replace("%20", " ");
-            Path pathOriginal = Paths.get(filename2);
-            storageService.deleteFile(pathOriginal);
-
-            postRepository.deleteById(id);
-
-            return ResponseEntity.noContent().build();
 
         }
     }

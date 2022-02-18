@@ -11,6 +11,7 @@ import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.services.base.BaseService;
 import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
 
+import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDtoEdit;
 import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto3;
 import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
@@ -120,10 +121,9 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     }
 
 
-    public User userEdit(MultipartFile file, CreateUserDto createUserDto, User userLogeado) throws IOException {
+    public User userEdit(MultipartFile file, CreateUserDtoEdit createUserDto, User userLogeado) throws IOException {
 
-        userLogeado.setNick(createUserDto.getNick());
-        userLogeado.setEmail(createUserDto.getEmail());
+
         userLogeado.setPassword(createUserDto.getPassword());
         userLogeado.setFechaNacimiento(createUserDto.getFechaNacimiento());
         userLogeado.setPrivacity(createUserDto.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO);
