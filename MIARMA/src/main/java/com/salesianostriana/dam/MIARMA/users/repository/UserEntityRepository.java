@@ -15,9 +15,12 @@ import java.util.UUID;
 public interface UserEntityRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findFirstByEmail(String email);
+
     Optional<User> findById(UUID id);
+
     Optional<User> findByNick(String nick);
-    List<User> findByRoles (UserRole roles);
+
+    List<User> findByRoles(UserRole roles);
 
     @EntityGraph("grafo-followers-user")
     List<User> findAll();
@@ -27,7 +30,7 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
             SELECT * FROM user u
             WHERE u.id = (SELECT user_id FROM follows
                           WHERE following_id = :followed_id)
-            """,nativeQuery = true)
+            """, nativeQuery = true)
     List<User> findFollowers(@Param("followed_id") UUID id);
 
     boolean existsByNick(String nick);
@@ -36,9 +39,6 @@ public interface UserEntityRepository extends JpaRepository<User, UUID> {
 
 
     Optional<User> findByFollowsContains(User user);
-
-
-
 
 
 }

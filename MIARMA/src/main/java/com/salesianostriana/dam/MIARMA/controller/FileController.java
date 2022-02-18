@@ -16,8 +16,6 @@ public class FileController {
     private final StorageService storageService;
 
 
-
-
     @GetMapping("/download/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         MediaTypeUrlResource resource = (MediaTypeUrlResource) storageService.loadAsResource(filename);

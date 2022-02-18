@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class UserEmailUniqueValueMatchValitor implements ConstraintValidator<UserEmailUniqueValueMatch,String> {
+public class UserEmailUniqueValueMatchValitor implements ConstraintValidator<UserEmailUniqueValueMatch, String> {
 
     @Autowired
     private UserEntityRepository userEntityRepository;
@@ -20,6 +20,7 @@ public class UserEmailUniqueValueMatchValitor implements ConstraintValidator<Use
     public void initialize(UserNickUniqueValueMatch constraintAnnotation) {
 
     }
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
 

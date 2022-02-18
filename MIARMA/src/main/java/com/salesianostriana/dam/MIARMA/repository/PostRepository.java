@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findByPrivacity (Estado estado);
+    List<Post> findByPrivacity(Estado estado);
 
     List<Post> findByUserNick(String nick);
 
@@ -22,10 +22,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     @Query("""
-        SELECT p FROM Post p
-        WHERE p.privacity = :estado
-        AND p.user.nick = :nick
-        """)
+            SELECT p FROM Post p
+            WHERE p.privacity = :estado
+            AND p.user.nick = :nick
+            """)
     List<Post> busquedaPorNick(@Param("estado") Estado privacity, @Param("nick") String nick);
 
 

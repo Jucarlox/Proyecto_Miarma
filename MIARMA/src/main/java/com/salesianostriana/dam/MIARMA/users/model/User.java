@@ -24,8 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
@@ -33,7 +31,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 public class User implements UserDetails {
-    @Id @GeneratedValue(generator = "UUID")
+    @Id
+    @GeneratedValue(generator = "UUID")
     @GenericGenerator(
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator",
@@ -79,14 +78,10 @@ public class User implements UserDetails {
     private List<Peticion> peticionList = new ArrayList<>();
 
 
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + roles.name()));
     }
-
-
 
 
     @Override
@@ -113,8 +108,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 
 
     public void addPeticion(Peticion p) {

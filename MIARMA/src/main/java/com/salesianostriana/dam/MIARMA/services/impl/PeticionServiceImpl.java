@@ -1,5 +1,7 @@
 package com.salesianostriana.dam.MIARMA.services.impl;
 
+import com.salesianostriana.dam.MIARMA.errores.excepciones.NickUserNotFoundException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.SingleEntityNotFoundException;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.repository.PeticionRepository;
 import com.salesianostriana.dam.MIARMA.users.model.User;
@@ -18,10 +20,10 @@ public class PeticionServiceImpl {
     private final UserEntityRepository userEntityRepository;
     private final PeticionRepository peticionRepository;
 
-    public Peticion solicitud (User userLogeado, String nick){
+    public Peticion solicitud(User userLogeado, String nick) {
         Optional<User> userBuscado = userEntityRepository.findByNick(nick);
 
-        if(userBuscado.isPresent()){
+        if (userBuscado.isPresent()) {
             Peticion peticion = Peticion.builder()
                     .user(userLogeado)
                     .build();
@@ -31,45 +33,39 @@ public class PeticionServiceImpl {
             peticionRepository.save(peticion);
 
             return peticion;
-        }else {
-            return null;
+        } else {
+            throw new NickUserNotFoundException(nick, User.class);
         }
     }
 
-    public List<User> aceptarSolicitud (User userLogeado, Long id){
+    public List<User> aceptarSolicitud(User userLogeado, Long id) {
 
         Optional<Peticion> peticion = peticionRepository.findById(id);
 
-        if(peticion.isPresent()){
+        if (peticion.isPresent()) {
 
             userLogeado.addFollower(peticion.get().getUser());
             peticion.get().borrarDestinatarios();
             peticionRepository.deleteById(id);
 
             return userLogeado.getFollows();
-        }else{
-            return null;
+        } else {
+            throw new SingleEntityNotFoundException(id.toString(), Peticion.class);
         }
     }
 
 
-
-    public void rechazarSolicitud (Long id){
+    public void rechazarSolicitud(Long id) {
 
         Optional<Peticion> peticion = peticionRepository.findById(id);
-
-        if(peticion.isPresent()){
-
-
+        if (peticion.isPresent()) {
             peticionRepository.deleteById(id);
-
-
+        } else {
+            throw new SingleEntityNotFoundException(id.toString(), Peticion.class);
         }
     }
 
-    public List<Peticion> findAll (){
-
+    public List<Peticion> findAll() {
         return peticionRepository.findAll();
-
     }
 }

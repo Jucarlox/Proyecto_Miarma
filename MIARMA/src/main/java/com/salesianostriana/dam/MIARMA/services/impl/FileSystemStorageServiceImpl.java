@@ -40,11 +40,11 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     private final Path rootLocation;
 
-    public static BufferedImage simpleImageResizer (BufferedImage bufferedImage, int targetWisth){
+    public static BufferedImage simpleImageResizer(BufferedImage bufferedImage, int targetWisth) {
         return Scalr.resize(bufferedImage, targetWisth);
     }
 
-    public FileSystemStorageServiceImpl(StorageProperties storageProperties ) {
+    public FileSystemStorageServiceImpl(StorageProperties storageProperties) {
         this.rootLocation = Paths.get(storageProperties.getLocation());
     }
 
@@ -70,13 +70,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
                 throw new StorageException("El fichero subido está vacío");
 
             newFilename = filename;
-            while(Files.exists(rootLocation.resolve(newFilename))) {
+            while (Files.exists(rootLocation.resolve(newFilename))) {
 
                 String extension = StringUtils.getFilenameExtension(newFilename);
-                String name = newFilename.replace("."+extension,"");
+                String name = newFilename.replace("." + extension, "");
 
                 String suffix = Long.toString(System.currentTimeMillis());
-                suffix = suffix.substring(suffix.length()-6);
+                suffix = suffix.substring(suffix.length() - 6);
 
                 newFilename = name + "_" + suffix + "." + extension;
             }
@@ -91,12 +91,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
         return newFilename;
 
     }
+
     @Override
     public String escalado(MultipartFile file, int size) throws IOException {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
         String extension = StringUtils.getFilenameExtension(filename);
-        String name = filename.replace("."+ extension, "");
+        String name = filename.replace("." + extension, "");
 
         BufferedImage img = ImageIO.read(file.getInputStream());
 
@@ -113,9 +114,9 @@ public class FileSystemStorageServiceImpl implements StorageService {
                 throw new StorageException("El fichero subido está vacío");
 
 
-            while(Files.exists(rootLocation.resolve(filename))) {
+            while (Files.exists(rootLocation.resolve(filename))) {
                 String suffix = Long.toString(System.currentTimeMillis());
-                suffix = suffix.substring(suffix.length()-6);
+                suffix = suffix.substring(suffix.length() - 6);
 
                 filename = name + "_" + suffix + "." + extension;
             }
@@ -135,7 +136,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String extension = StringUtils.getFilenameExtension(filename);
-        String name = filename.replace("."+ extension, "");
+        String name = filename.replace("." + extension, "");
 
         IVCompressor compressor = new IVCompressor();
         IVSize customRes = new IVSize();
@@ -154,7 +155,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
         videoAttribute.setSize(customRes);
 
 
-        byte[] video = compressor.encodeVideoWithAttributes(file.getBytes(), VideoFormats.MP4,audioAttribute, videoAttribute);
+        byte[] video = compressor.encodeVideoWithAttributes(file.getBytes(), VideoFormats.MP4, audioAttribute, videoAttribute);
 
         InputStream inputStreamEscalado = new ByteArrayInputStream(video);
         try {
@@ -162,9 +163,9 @@ public class FileSystemStorageServiceImpl implements StorageService {
                 throw new StorageException("El fichero subido está vacío");
 
 
-            while(Files.exists(rootLocation.resolve(filename))) {
+            while (Files.exists(rootLocation.resolve(filename))) {
                 String suffix = Long.toString(System.currentTimeMillis());
-                suffix = suffix.substring(suffix.length()-6);
+                suffix = suffix.substring(suffix.length() - 6);
 
                 filename = name + "_" + suffix + "." + extension;
             }
@@ -182,20 +183,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
     }
 
 
-
-
-
-
-
-
     @Override
     public Stream<Path> loadAll() {
         try {
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Error al leer los ficheros almacenados", e);
         }
     }
@@ -213,13 +207,11 @@ public class FileSystemStorageServiceImpl implements StorageService {
             MediaTypeUrlResource resource = new MediaTypeUrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new FileNotFoundException(
                         "Could not read file: " + filename);
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new FileNotFoundException("Could not read file: " + filename, e);
         }
     }
@@ -235,7 +227,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
                 throw new FileNotFoundException(
                         "Could not read file: " + filename);
             }
-        }catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new FileNotFoundException("Could not read file: " + filename, e);
         }
 
@@ -245,15 +237,6 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
-
-
-
-
-
-
-
-
-
 
 
 }

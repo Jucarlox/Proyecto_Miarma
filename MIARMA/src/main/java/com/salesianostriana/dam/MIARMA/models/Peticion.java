@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 
 @NamedEntityGraph(
-        name = "grafo-peticion-user",attributeNodes = {
+        name = "grafo-peticion-user", attributeNodes = {
         @NamedAttributeNode("user"),
 }
 )
@@ -29,8 +29,9 @@ public class Peticion {
     private User user;
 
     @PreRemove
-    public void borrarDestinatarios(){user.setPeticionList(null);}
-
+    public void borrarDestinatarios() {
+        user.setPeticionList(null);
+    }
 
 
 }

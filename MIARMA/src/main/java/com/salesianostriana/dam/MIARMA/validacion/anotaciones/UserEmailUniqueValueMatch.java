@@ -8,15 +8,16 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 
-
 @Constraint(validatedBy = UserEmailUniqueValueMatchValitor.class)
-@Target({  ElementType.FIELD })
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface UserEmailUniqueValueMatch {
-    String message() ;
-    Class <?> [] groups() default {};
-    Class <? extends Payload> [] payload() default {};
+    String message();
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 
 
 }

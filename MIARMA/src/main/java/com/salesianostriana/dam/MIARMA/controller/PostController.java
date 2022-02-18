@@ -18,6 +18,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,9 +32,8 @@ public class PostController {
     private final UserDtoConverter userDtoConverter;
 
 
-
     @PostMapping("/post")
-    public ResponseEntity<?> nuevoPost(@RequestPart("file") MultipartFile file, @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal) throws IOException, VideoException {
+    public ResponseEntity<?> nuevoPost(@RequestPart("file") MultipartFile file, @Valid @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal) throws IOException, VideoException {
         Post saved = postService.savePost(createPostDto, file, userPrincipal);
 
         if (saved == null)
@@ -45,7 +45,7 @@ public class PostController {
 
 
     @PutMapping("/post/{id}")
-    public ResponseEntity<?> editPost(@RequestPart("file") MultipartFile file, @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal, @PathVariable Long id) throws IOException, VideoException {
+    public ResponseEntity<?> editPost(@RequestPart("file") MultipartFile file, @Valid @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal, @PathVariable Long id) throws IOException, VideoException {
         Post saved = postService.editPost(createPostDto, file, userPrincipal, id);
 
         if (saved == null)
@@ -71,9 +71,9 @@ public class PostController {
 
         Post post = postService.getPostById(id, user);
 
-        if(post==null){
+        if (post == null) {
             return ResponseEntity.badRequest().build();
-        }else{
+        } else {
             return ResponseEntity.ok().body(postDtoConverter.convertPostToGetPostDto(post));
         }
 
@@ -83,7 +83,7 @@ public class PostController {
     @GetMapping("/post/me")
     public ResponseEntity<GetUserDto> getPostMe(@AuthenticationPrincipal User user) throws IOException {
 
-        List<Post> postList=postRepository.findByUser(user);
+        List<Post> postList = postRepository.findByUser(user);
 
         GetUserDto getUserDto = userDtoConverter.convertUserEntityToGetUserDto2(user, postList);
 
@@ -93,12 +93,11 @@ public class PostController {
     }
 
     @GetMapping("/post/")
-    public ResponseEntity<List<GetPostDto>> getPostByNick(@RequestParam(value = "nick") String nick, @AuthenticationPrincipal User user){
-        List<GetPostDto> postDtoList = postService.findAllPublicationsOfOneUser(nick, user);
+    public ResponseEntity<List<GetPostDto>> getPostByNick(@RequestParam(value = "nick") String nick, @AuthenticationPrincipal User user) {
+        List<GetPostDto> postDtoList = postService.getPostListByNick(nick, user);
 
         return ResponseEntity.ok().body(postDtoList);
     }
-
 
 
 }

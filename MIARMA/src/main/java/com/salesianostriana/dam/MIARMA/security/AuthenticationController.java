@@ -37,8 +37,8 @@ public class AuthenticationController {
     private final PostRepository postRepository;
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
-        Authentication authentication= authenticationManager.authenticate(
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDto.getEmail(),
                         loginDto.getPassword()
@@ -57,6 +57,7 @@ public class AuthenticationController {
                 .body(convertUserToJwtUserResponse(user, jwt));
 
     }
+
     private JwtUserResponse convertUserToJwtUserResponse(User user, String jwt) {
         return JwtUserResponse.builder()
                 .nike(user.getNick())
@@ -67,7 +68,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<GetUserDto3> me(@AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<GetUserDto3> me(@AuthenticationPrincipal User userPrincipal) {
 
         GetUserDto3 getUserDto = userDtoConverter.convertUserEntityToGetUserDto(userPrincipal);
 

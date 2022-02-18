@@ -39,7 +39,7 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
                         .stream()
                         .map(cv -> ApiValidationSubError.builder()
                                 .objeto(cv.getRootBeanClass().getSimpleName())
-                                .campo(((PathImpl)cv.getPropertyPath()).getLeafNode().asString())
+                                .campo(((PathImpl) cv.getPropertyPath()).getLeafNode().asString())
                                 .valorRechazado(cv.getInvalidValue())
                                 .mensaje(cv.getMessage())
                                 .build())
@@ -69,8 +69,7 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
                                 .mensaje(fieldError.getDefaultMessage())
                                 .build()
                 );
-            }
-            else // Si no, es que se ha producido en una anotación a nivel de clase
+            } else // Si no, es que se ha producido en una anotación a nivel de clase
             {
                 ObjectError objectError = (ObjectError) error;
 
@@ -84,7 +83,6 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
 
 
         });
-
 
 
         return buildApiErrorWithSubError(HttpStatus.BAD_REQUEST, "Errores varios en la validación",
@@ -114,7 +112,7 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
 
 
     private ResponseEntity<Object> buildApiError404(Exception ex, WebRequest request) {
-        return buildApiErrorStatus(HttpStatus.NOT_FOUND, ex, request);
+        return buildApiErrorStatus(HttpStatus.BAD_REQUEST, ex, request);
     }
 
     private ResponseEntity<Object> buildApiErrorStatus(HttpStatus status, Exception ex, WebRequest request) {

@@ -24,9 +24,9 @@ public class PeticionController {
     private final UserDtoConverter userDtoConverter;
 
     @PostMapping("/follow/{nick}")
-    public ResponseEntity<GetPeticionDto> solicitud(@AuthenticationPrincipal User user, @PathVariable String nick){
+    public ResponseEntity<GetPeticionDto> solicitud(@AuthenticationPrincipal User user, @PathVariable String nick) {
 
-        Peticion peticion=peticionService.solicitud(user, nick);
+        Peticion peticion = peticionService.solicitud(user, nick);
 
         if (peticion == null)
             return ResponseEntity.badRequest().build();
@@ -36,9 +36,9 @@ public class PeticionController {
     }
 
     @PostMapping("/follow/accept/{id}")
-    public ResponseEntity<?> aceptarSolicitud(@AuthenticationPrincipal User user, @PathVariable Long id){
+    public ResponseEntity<?> aceptarSolicitud(@AuthenticationPrincipal User user, @PathVariable Long id) {
 
-        List<User> userList=peticionService.aceptarSolicitud(user, id);
+        List<User> userList = peticionService.aceptarSolicitud(user, id);
 
         if (userList == null)
             return ResponseEntity.badRequest().build();
@@ -48,18 +48,18 @@ public class PeticionController {
     }
 
     @DeleteMapping("/follow/decline/{id}")
-    public ResponseEntity<?> rechazarSolicitud(@PathVariable Long id){
+    public ResponseEntity<?> rechazarSolicitud(@PathVariable Long id) {
 
-       peticionService.rechazarSolicitud(id);
+        peticionService.rechazarSolicitud(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("follow/list")
-    public ResponseEntity<List<GetPeticionDto>> listaPeticiones(){
-        if (peticionService.findAll().isEmpty()){
+    public ResponseEntity<List<GetPeticionDto>> listaPeticiones() {
+        if (peticionService.findAll().isEmpty()) {
             return ResponseEntity.notFound().build();
-        }else{
+        } else {
             List<GetPeticionDto> list = peticionService.findAll().stream()
                     .map(publicacionDtoConverter::convertPeticionToGetPeticionDto)
                     .collect(Collectors.toList());

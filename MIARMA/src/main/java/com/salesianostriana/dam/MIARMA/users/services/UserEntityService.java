@@ -4,6 +4,7 @@ package com.salesianostriana.dam.MIARMA.users.services;
 import com.salesianostriana.dam.MIARMA.errores.excepciones.DynamicException;
 import com.salesianostriana.dam.MIARMA.errores.excepciones.EntityNotFoundException;
 import com.salesianostriana.dam.MIARMA.errores.excepciones.SingleEntityNotFoundException;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.UnsupportedMediaType;
 import com.salesianostriana.dam.MIARMA.models.Estado;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import java.util.Optional;
@@ -49,7 +51,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return this.repositorio.findFirstByEmail(email).orElseThrow(()-> new UsernameNotFoundException("El "+ email + " no encontrado"));
+        return this.repositorio.findFirstByEmail(email).orElseThrow(() -> new UsernameNotFoundException("El " + email + " no encontrado"));
     }
 
 
@@ -62,40 +64,45 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     }
 
     public User saveUser(CreateUserDto newUser, MultipartFile file) throws IOException {
+        String extension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
+        List<String> imagenExtension = Arrays.asList("png", "gif", "jpg", "svg");
 
+        if (imagenExtension.contains(extension)) {
+            String filename = storageService.escalado(file, 128);
 
-        String filename = storageService.escalado(file,128);
+            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/download/")
+                    .path(filename)
+                    .toUriString();
 
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(filename)
-                .toUriString();
-
-
-        if (newUser.getPassword().contentEquals(newUser.getPassword2())) {
-            User user = User.builder()
-                    .password(passwordEncoder.encode(newUser.getPassword()))
-                    .avatar(uri)
-                    .nick(newUser.getNick())
-                    .email(newUser.getEmail())
-                    .fechaNacimiento(newUser.getFechaNacimiento())
-                    .roles(UserRole.USER)
-                    .privacity(newUser.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO)
-                    .build();
-            try{
-                return save(user);
-            }catch (DataIntegrityViolationException ex){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de ese usuario ya existe");
+            if (newUser.getPassword().contentEquals(newUser.getPassword2())) {
+                User user = User.builder()
+                        .password(passwordEncoder.encode(newUser.getPassword()))
+                        .avatar(uri)
+                        .nick(newUser.getNick())
+                        .email(newUser.getEmail())
+                        .fechaNacimiento(newUser.getFechaNacimiento())
+                        .roles(UserRole.USER)
+                        .privacity(newUser.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO)
+                        .build();
+                try {
+                    return save(user);
+                } catch (DataIntegrityViolationException ex) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de ese usuario ya existe");
+                }
+            } else {
+                throw new DynamicException("Las contraseñas no coinciden");
             }
         } else {
-            return null;
+            throw new UnsupportedMediaType(imagenExtension);
         }
+
     }
 
 
-    public GetUserDto3 visializarPerfif(User user, UUID id){
+    public GetUserDto3 visializarPerfif(User user, UUID id) {
 
-        Optional<User> userBuscado =userEntityRepository.findById(id);
+        Optional<User> userBuscado = userEntityRepository.findById(id);
 
         if (userBuscado.isPresent()) {
 
@@ -109,7 +116,8 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
                 }
                 throw new DynamicException("Cuenta privada, no sigues al usuario");
             }
-        } throw new SingleEntityNotFoundException(id.toString(),User.class);
+        }
+        throw new SingleEntityNotFoundException(id.toString(), User.class);
 
     }
 
@@ -120,39 +128,35 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
         userLogeado.setEmail(createUserDto.getEmail());
         userLogeado.setPassword(createUserDto.getPassword());
         userLogeado.setFechaNacimiento(createUserDto.getFechaNacimiento());
-        userLogeado.setPrivacity(createUserDto.isPrivacity()? Estado.PRIVADO : Estado.PUBLICO);
+        userLogeado.setPrivacity(createUserDto.isPrivacity() ? Estado.PRIVADO : Estado.PUBLICO);
+
+        String extension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
+
+        List<String> imagenExtension = Arrays.asList("png", "gif", "jpg", "svg");
+
+        if (imagenExtension.contains(extension)) {
+            String avatar = StringUtils.cleanPath(String.valueOf(userLogeado.getAvatar())).replace("http://localhost:8080/download/", "")
+                    .replace("%20", " ");
+            Path path = storageService.load(avatar);
+            String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
+                    .replace("%20", " ");
+            Path pathScalse = Paths.get(filename);
+            storageService.deleteFile(pathScalse);
 
 
+            String filenameAvatar = storageService.escalado(file, 128);
 
-        String avatar = StringUtils.cleanPath(String.valueOf(userLogeado.getAvatar())).replace("http://localhost:8080/download/", "")
-                .replace("%20", " ");
-        Path path = storageService.load(avatar);
-        String filename = StringUtils.cleanPath(String.valueOf(path)).replace("http://localhost:8080/download/", "")
-                .replace("%20", " ");
-        Path pathScalse = Paths.get(filename);
-        storageService.deleteFile(pathScalse);
+            String uriAvatar = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/download/")
+                    .path(filenameAvatar)
+                    .toUriString();
 
-        String filenameAvatar = storageService.escalado(file, 128);
-
-        String uriAvatar = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(filenameAvatar)
-                .toUriString();
-
-        userLogeado.setAvatar(uriAvatar);
-
-
-
+            userLogeado.setAvatar(uriAvatar);
+        } else {
+            throw new UnsupportedMediaType(imagenExtension);
+        }
         return repositorio.save(userLogeado);
     }
-
-
-
-
-
-
-
-
 
 
 }

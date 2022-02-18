@@ -34,12 +34,11 @@ public class UserDtoConverter {
                 .nick(user.getNick())
                 .email(user.getEmail())
                 .estado(user.getPrivacity())
-                .postList(postList.stream().map(p -> new GetPostDto(p.getId(),p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList())
+                .postList(postList.stream().map(p -> new GetPostDto(p.getId(), p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList())
                 .build();
 
 
     }
-
 
 
     public GetUserDto2 convertUserEntityToGetUserDto7(User user) {
@@ -54,14 +53,10 @@ public class UserDtoConverter {
     }
 
 
-
-
-
-
     public List<GetUserDto2> convertUserEntityToGetUserDto3(List<User> userList) {
 
 
-        return userList.stream().map(p-> convertUserEntityToGetUserDto7(p)).toList();
+        return userList.stream().map(p -> convertUserEntityToGetUserDto7(p)).toList();
 
 
     }

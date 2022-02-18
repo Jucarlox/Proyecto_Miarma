@@ -24,11 +24,8 @@ public class UserController {
     private final UserDtoConverter userDtoConverter;
 
 
-
-
-
     @PostMapping("/auth/register")
-    public ResponseEntity<GetUserDto3> nuevoUsuario(@RequestPart("file")MultipartFile file,@Valid @RequestPart("user") CreateUserDto newPropietario) throws IOException {
+    public ResponseEntity<GetUserDto3> nuevoUsuario(@RequestPart("file") MultipartFile file, @Valid @RequestPart("user") CreateUserDto newPropietario) throws IOException {
         User saved = userEntityService.saveUser(newPropietario, file);
 
         if (saved == null)
@@ -39,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<?> visializarPerfif(@AuthenticationPrincipal User userPrincipal, @PathVariable UUID id){
+    public ResponseEntity<?> visializarPerfif(@AuthenticationPrincipal User userPrincipal, @PathVariable UUID id) {
 
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -47,16 +44,12 @@ public class UserController {
     }
 
     @PutMapping("/profile/me")
-    public ResponseEntity<?> editUser(@RequestPart("file") MultipartFile file, @RequestPart("user") CreateUserDto createUserDto, @AuthenticationPrincipal User userPrincipal) throws IOException {
+    public ResponseEntity<?> editUser(@RequestPart("file") MultipartFile file, @Valid @RequestPart("user") CreateUserDto createUserDto, @AuthenticationPrincipal User userPrincipal) throws IOException {
         User userEditado = userEntityService.userEdit(file, createUserDto, userPrincipal);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userDtoConverter.convertUserEntityToGetUserDto(userEditado));
     }
-
-
-
-
 
 
 }

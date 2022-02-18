@@ -8,7 +8,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @EnableConfigurationProperties(StorageProperties.class)
 @SpringBootApplication
-public class MiarmaApplication {
+public class
+MiarmaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MiarmaApplication.class, args);

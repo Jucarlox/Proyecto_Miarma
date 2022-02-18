@@ -26,6 +26,4 @@ public class GetUserDto {
     private List<GetPostDto> postList;
 
 
-
-
 }

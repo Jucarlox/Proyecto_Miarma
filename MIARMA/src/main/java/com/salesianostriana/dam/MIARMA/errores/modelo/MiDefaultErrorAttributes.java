@@ -16,8 +16,8 @@ public class MiDefaultErrorAttributes extends DefaultErrorAttributes {
     @Override
     public Map<String, Object> getErrorAttributes(WebRequest webRequest, ErrorAttributeOptions options) {
         Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, options);
-        Map<String,Object> result =  Map.of(
-                "estado",errorAttributes.get("status"),
+        Map<String, Object> result = Map.of(
+                "estado", errorAttributes.get("status"),
                 "codigo", HttpStatus.valueOf((int) errorAttributes.get("status")).name(),
                 "fecha", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
                 "ruta", errorAttributes.get("path")

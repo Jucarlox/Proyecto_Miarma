@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PeticionRepository extends JpaRepository <Peticion, Long> {
+public interface PeticionRepository extends JpaRepository<Peticion, Long> {
 
     @EntityGraph(value = "grafo-peticion-user", type = EntityGraph.EntityGraphType.LOAD)
     List<Peticion> findByIdNotNull();
