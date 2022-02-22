@@ -3,10 +3,12 @@ package com.salesianostriana.dam.MIARMA.users.dto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
 import com.salesianostriana.dam.MIARMA.models.Post;
 import com.salesianostriana.dam.MIARMA.users.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Component
 public class UserDtoConverter {
 
@@ -34,7 +36,7 @@ public class UserDtoConverter {
                 .nick(user.getNick())
                 .email(user.getEmail())
                 .estado(user.getPrivacity())
-                .postList(postList.stream().map(p -> new GetPostDto(p.getId(), p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList())
+                .postList(postList.stream().map(p -> new GetPostDto(p.getId(), p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity(), convertUserEntityToGetUserDto(p.getUser()))).toList())
                 .build();
 
 

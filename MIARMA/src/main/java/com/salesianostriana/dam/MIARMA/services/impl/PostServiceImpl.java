@@ -9,6 +9,7 @@ import com.salesianostriana.dam.MIARMA.models.Post;
 import com.salesianostriana.dam.MIARMA.repository.PostRepository;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
+import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import com.salesianostriana.dam.MIARMA.users.repository.UserEntityRepository;
@@ -34,6 +35,7 @@ public class PostServiceImpl {
     private final PostRepository postRepository;
     private final UserEntityRepository userEntityRepository;
     private final PostDtoConverter postDtoConverter;
+    private final UserDtoConverter userDtoConverter;
 
     public Post savePost(CreatePostDto newPost, MultipartFile file, User user) throws IOException, VideoException {
         String filenameOriginal = storageService.original(file);
@@ -190,7 +192,7 @@ public class PostServiceImpl {
             throw new ListEntityNotFoundException(Post.class);
         } else {
             List<GetPostDto> getPostDto = postList.stream().map(p -> new GetPostDto(p.getId(),
-                    p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity())).toList();
+                    p.getTitle(), p.getDescripcion(), p.getFileScale(), p.getPrivacity(),userDtoConverter.convertUserEntityToGetUserDto(p.getUser()) )).toList();
             return getPostDto;
         }
 
