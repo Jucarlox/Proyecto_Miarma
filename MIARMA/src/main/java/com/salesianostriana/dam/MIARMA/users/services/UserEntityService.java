@@ -7,13 +7,11 @@ import com.salesianostriana.dam.MIARMA.errores.excepciones.SingleEntityNotFoundE
 import com.salesianostriana.dam.MIARMA.errores.excepciones.UnsupportedMediaType;
 import com.salesianostriana.dam.MIARMA.models.Estado;
 import com.salesianostriana.dam.MIARMA.models.Peticion;
+import com.salesianostriana.dam.MIARMA.repository.PostRepository;
 import com.salesianostriana.dam.MIARMA.services.StorageService;
 import com.salesianostriana.dam.MIARMA.services.base.BaseService;
-import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDto;
+import com.salesianostriana.dam.MIARMA.users.dto.*;
 
-import com.salesianostriana.dam.MIARMA.users.dto.CreateUserDtoEdit;
-import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto3;
-import com.salesianostriana.dam.MIARMA.users.dto.UserDtoConverter;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +46,7 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     private final StorageService storageService;
     private final UserEntityRepository userEntityRepository;
     private final UserDtoConverter userDtoConverter;
+    private final PostRepository postRepository;
 
 
     @Override
@@ -99,18 +98,19 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     }
 
 
-    public GetUserDto3  visializarPerfif(User user, UUID id) {
+    public GetUserDto visializarPerfif(User user, UUID id) {
 
         Optional<User> userBuscado = userEntityRepository.findById(id);
 
         if (userBuscado.isPresent()) {
 
             if (userBuscado.get().getPrivacity().equals(Estado.PUBLICO)) {
-                return userDtoConverter.convertUserEntityToGetUserDto(userBuscado.get());
+                return userDtoConverter.convertUserEntityToGetUserDto2(userBuscado.get(), postRepository.findByUser(userBuscado.get()));
+
             } else {
                 for (User usuarioDeLaLista : userEntityRepository.findFollowers(userBuscado.get().getId())) {
                     if (usuarioDeLaLista.getId().equals(user.getId())) {
-                        return userDtoConverter.convertUserEntityToGetUserDto(userBuscado.get());
+                        return userDtoConverter.convertUserEntityToGetUserDto2(userBuscado.get(), postRepository.findByUser(userBuscado.get()));
                     }
                 }
                 throw new DynamicException("Cuenta privada, no sigues al usuario");

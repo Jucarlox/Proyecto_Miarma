@@ -5,6 +5,8 @@ import com.salesianostriana.dam.MIARMA.users.dto.GetUserDto;
 import com.salesianostriana.dam.MIARMA.users.model.User;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class PostDtoConverter {
 
@@ -17,5 +19,4 @@ public class PostDtoConverter {
                 .fileScale(post.getFileScale())
                 .build();
     }
-
 }
