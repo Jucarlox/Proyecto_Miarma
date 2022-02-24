@@ -63,6 +63,7 @@ public class AuthenticationController {
                 .nike(user.getNick())
                 .email(user.getEmail())
                 .role(user.getRoles().toString())
+                .id(user.getId())
                 .token(jwt)
                 .build();
     }
