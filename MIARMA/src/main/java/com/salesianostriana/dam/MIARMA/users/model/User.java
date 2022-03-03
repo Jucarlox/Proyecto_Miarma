@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String nick;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     @Enumerated(EnumType.STRING)
     private UserRole roles;

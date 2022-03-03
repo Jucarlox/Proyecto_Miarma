@@ -8,6 +8,7 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -30,8 +31,8 @@ public class CreateUserDto {
     private String email;
 
 
-    private Date fechaNacimiento;
-    private String avatar;
+    private LocalDate fechaNacimiento;
+
     private boolean privacity;
     @NotEmpty
     private String password;

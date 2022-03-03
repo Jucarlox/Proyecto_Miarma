@@ -13,6 +13,7 @@ import com.salesianostriana.dam.MIARMA.security.dto.JwtUserResponse;
 import com.salesianostriana.dam.MIARMA.security.dto.LoginDto;
 import com.salesianostriana.dam.MIARMA.security.jwt.JwtProvider;
 import com.salesianostriana.dam.MIARMA.users.model.User;
+import com.salesianostriana.dam.MIARMA.users.services.UserEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class AuthenticationController {
     private final JwtProvider jwtProvider;
     private final UserDtoConverter userDtoConverter;
     private final PostRepository postRepository;
+    private final UserEntityService userEntityService;
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
@@ -69,9 +71,9 @@ public class AuthenticationController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<GetUserDto3> me(@AuthenticationPrincipal User userPrincipal) {
+    public ResponseEntity<?> me(@AuthenticationPrincipal User userPrincipal) {
 
-        GetUserDto3 getUserDto = userDtoConverter.convertUserEntityToGetUserDto(userPrincipal);
+        GetUserDto getUserDto = userEntityService.visializarPerfif(userPrincipal, userPrincipal.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(getUserDto);

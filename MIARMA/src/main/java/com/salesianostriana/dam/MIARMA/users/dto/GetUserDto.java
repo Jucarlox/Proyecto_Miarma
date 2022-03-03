@@ -6,6 +6,7 @@ import com.salesianostriana.dam.MIARMA.models.Post;
 import com.salesianostriana.dam.MIARMA.users.model.UserRole;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class GetUserDto {
     private UUID id;
     private String nick;
     private String email;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
     private String avatar;
     private Estado estado;
     private List<GetPostDto> postList;

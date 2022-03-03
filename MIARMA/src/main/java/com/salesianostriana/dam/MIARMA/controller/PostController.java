@@ -33,8 +33,18 @@ public class PostController {
 
 
     @PostMapping("/post")
-    public ResponseEntity<?> nuevoPost(@RequestPart("file") MultipartFile file, @Valid @RequestPart("post") CreatePostDto createPostDto, @AuthenticationPrincipal User userPrincipal) throws IOException, VideoException {
+    public ResponseEntity<?> nuevoPost(@RequestPart("file") MultipartFile file,@Valid @RequestParam("title") String title,@Valid @RequestParam("descripcion") String descripcion,@Valid @RequestParam("privacity") boolean privacity, @AuthenticationPrincipal User userPrincipal) throws IOException, VideoException {
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title(title)
+                .privacity(privacity)
+                .descripcion(descripcion)
+                .build();
+
+
         Post saved = postService.savePost(createPostDto, file, userPrincipal);
+
+
+
 
         if (saved == null)
             return ResponseEntity.badRequest().build();

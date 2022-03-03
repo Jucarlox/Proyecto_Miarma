@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -17,7 +18,7 @@ import java.util.Date;
 @Builder
 public class CreateUserDtoEdit {
 
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
     private String avatar;
     private boolean privacity;
     @NotEmpty
