@@ -121,6 +121,18 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
     }
 
 
+    public GetUserDto visializarMiPerfif(User user, UUID id) {
+
+        Optional<User> userBuscado = userEntityRepository.findById(id);
+
+
+                return userDtoConverter.convertUserEntityToGetUserDto2(userBuscado.get(), postRepository.findByUser(userBuscado.get()));
+
+
+
+    }
+
+
     public User userEdit(MultipartFile file, CreateUserDtoEdit createUserDto, User userLogeado) throws IOException {
 
 

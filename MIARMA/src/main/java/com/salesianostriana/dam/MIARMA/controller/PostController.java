@@ -3,6 +3,7 @@ package com.salesianostriana.dam.MIARMA.controller;
 import com.salesianostriana.dam.MIARMA.Dto.Post.CreatePostDto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.GetPostDto;
 import com.salesianostriana.dam.MIARMA.Dto.Post.PostDtoConverter;
+import com.salesianostriana.dam.MIARMA.errores.excepciones.ListEntityNotFoundException;
 import com.salesianostriana.dam.MIARMA.models.Post;
 import com.salesianostriana.dam.MIARMA.repository.PostRepository;
 import com.salesianostriana.dam.MIARMA.services.impl.PostServiceImpl;
@@ -73,7 +74,13 @@ public class PostController {
 
     @GetMapping("/post/public")
     public ResponseEntity<List<GetPostDto>> getAllPostPublic() throws IOException {
-        return ResponseEntity.ok().body(postService.getAllPostPublic());
+        if(postService.getAllPostPublic().isEmpty()){
+            throw new ListEntityNotFoundException(Post.class);
+        }else{
+            return ResponseEntity.ok().body(postService.getAllPostPublic());
+        }
+
+
     }
 
     @GetMapping("/post/{id}")

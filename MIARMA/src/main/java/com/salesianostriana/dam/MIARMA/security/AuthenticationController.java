@@ -73,9 +73,9 @@ public class AuthenticationController {
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal User userPrincipal) {
 
-        GetUserDto getUserDto = userEntityService.visializarPerfif(userPrincipal, userPrincipal.getId());
+        GetUserDto getUserDto = userEntityService.visializarMiPerfif(userPrincipal, userPrincipal.getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(getUserDto);
     }
 
