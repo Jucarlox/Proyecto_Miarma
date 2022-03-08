@@ -73,7 +73,8 @@ public class UserEntityService extends BaseService<User, UUID, UserEntityReposit
             String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/download/")
                     .path(filename)
-                    .toUriString();
+                    .toUriString()
+                    .replace("10.0.2.2", "localhost");
 
 
                 User user = User.builder()

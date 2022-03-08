@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 public class PeticionController {
 
     private final PeticionServiceImpl peticionService;

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 public class FileController {
 
     private final StorageService storageService;

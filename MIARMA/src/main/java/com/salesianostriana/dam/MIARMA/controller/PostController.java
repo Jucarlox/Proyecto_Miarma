@@ -25,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 public class PostController {
 
     private final PostServiceImpl postService;

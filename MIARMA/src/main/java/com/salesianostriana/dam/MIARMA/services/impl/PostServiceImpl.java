@@ -61,12 +61,14 @@ public class PostServiceImpl {
         String uriPublicacion = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(filenamePublicacion)
-                .toUriString();
+                .toUriString()
+                .replace("10.0.2.2", "localhost");
 
         String uriOriginal = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(filenameOriginal)
-                .toUriString();
+                .toUriString()
+                .replace("10.0.2.2", "localhost");
 
         Post post = Post.builder()
                 .title(newPost.getTitle())
